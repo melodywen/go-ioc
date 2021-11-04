@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_BuildOfContainerContract(t *testing.T) {
+func Test_CommonOfContainerContract(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
@@ -17,8 +17,8 @@ func Test_BuildOfContainerContract(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var build BuildOfContainerContract
-			build = new(container.BuildOfContainer)
+			var build CommonOfContainerContract
+			build = new(container.CommonOfContainer)
 			fmt.Println(build)
 		})
 	}
