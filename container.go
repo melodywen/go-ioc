@@ -4,10 +4,10 @@ import (
 	"reflect"
 )
 
-type Bind struct {
-	shared   bool
-	concrete interface{}
-}
+//type Bind struct {
+//	shared   bool
+//	concrete interface{}
+//}
 
 type Container struct {
 	instances map[string]interface{} // 绑定的实例 ， 如果他是单例模式则全部存储到这里面
