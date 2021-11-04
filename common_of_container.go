@@ -2,6 +2,7 @@ package container
 
 import (
 	"reflect"
+	"runtime"
 	"strconv"
 )
 
@@ -18,9 +19,11 @@ func (common *CommonOfContainer) AbstractToString(abstract interface{}) (respons
 	case reflect.Int:
 		response = strconv.Itoa(abstract.(int))
 	case reflect.Struct:
-		response = classInfo.PkgPath() + "/" + classInfo.Name()
+		response = classInfo.PkgPath() + "." + classInfo.Name()
+	case reflect.Func:
+		response = runtime.FuncForPC(reflect.ValueOf(abstract).Pointer()).Name()
 	case reflect.Ptr:
-		response = "*" + classInfo.Elem().PkgPath() + "/" + classInfo.Elem().Name()
+		response = "*" + classInfo.Elem().PkgPath() + "." + classInfo.Elem().Name()
 	default:
 		panic("checkAbstract error ")
 	}

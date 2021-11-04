@@ -26,11 +26,15 @@ func TestCommonOfContainer_AbstractToString(t *testing.T) {
 		}, {
 			name: "测试struct类型",
 			args: args{abstract: mock.Animal{}},
-			want: "cjw.com/melodywen/go-ioc/mock/Animal",
+			want: "cjw.com/melodywen/go-ioc/mock.Animal",
 		}, {
 			name: "测试指针类型",
 			args: args{abstract: mock.NewAnimal("猫", 1, "猫科")},
-			want: "*cjw.com/melodywen/go-ioc/mock/Animal",
+			want: "*cjw.com/melodywen/go-ioc/mock.Animal",
+		}, {
+			name: "测试指针类型",
+			args: args{abstract: mock.NewAnimal},
+			want: "cjw.com/melodywen/go-ioc/mock.NewAnimal",
 		},
 	}
 	for _, tt := range tests {
