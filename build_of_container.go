@@ -13,6 +13,8 @@ type BuildOfContainer struct {
 // 2. 也可以是回调函数
 // 3. 一个具体的标量值
 // 4. 如果是一个结构体，则直接寻找他对应的实例化方法
+// todo:
+// golang 目前没有发现动态加载功能， 待实现的一个功能： 如果是是  concrete 是一个结构体，能否自动寻路找到他的实例化方法？
 func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{}) (object interface{}) {
 	// 获取实现类的类型
 	concreteType := reflect.TypeOf(concrete)
@@ -52,14 +54,28 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{})
 			return response[0]
 		}
 		return response
-	case reflect.Struct:
-		pkg := concreteType.PkgPath()
-		name := concreteType.Name()
-		
-		fmt.Println(pkg,name)
-		return 1
 	default:
 		fmt.Println(concreteType.Kind())
 		return concrete
+	}
+}
+
+// 判断可以进行构建
+// 1. 一般都是 fun 类型
+// 2. 这里也允许让其他的部分类型通过
+func (_ *BuildOfContainer) isBuildable(abstract interface{}, concrete interface{}) bool {
+
+	if reflect.DeepEqual(abstract, concrete) {
+		return true
+	}
+	switch reflect.TypeOf(concrete).Kind() {
+	case reflect.Bool, reflect.String, reflect.Int, reflect.Float32, reflect.Float64:
+		fallthrough
+	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
+		fallthrough
+	case reflect.Func, reflect.Chan, reflect.Interface, reflect.Ptr:
+		return true
+	default:
+		panic("判定是否可以构建的时候发现类型不正确 isBuildable： ")
 	}
 }

@@ -120,10 +120,10 @@ func (container *Container) resolve(abstract interface{}, parameters []interface
 	// 如果没有则进行构造
 	//concrete := container.getConcrete(abstract)
 
-	// 开始进行构建
-	if container.isBuildable(abstract, container) {
-		//object = container.Build(concrete, parameters)
-	}
+	//// 开始进行构建
+	//if container.isBuildable(abstract, container) {
+	//	//object = container.Build(concrete, parameters)
+	//}
 
 	// 判定是否为共享的，如果是共享的则进行共享
 	if container.IsShared(index) {
@@ -171,26 +171,6 @@ func (container *Container) IsShared(abstract string) bool {
 		return value.shared
 	}
 	return false
-}
-
-// 判断可以进行构建
-// 1. 一般都是 fun 类型
-// 2. 这里也允许让 其他的部分类型通过
-func (container *Container) isBuildable(abstract interface{}, concrete interface{}) bool {
-
-	if reflect.DeepEqual(abstract, concrete) {
-		return true
-	}
-	switch reflect.TypeOf(concrete).Kind() {
-	case reflect.Bool, reflect.String, reflect.Int, reflect.Float32, reflect.Float64:
-		fallthrough
-	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
-		fallthrough
-	case reflect.Func, reflect.Chan, reflect.Interface, reflect.Ptr:
-		return true
-	default:
-		panic("判定是否可以构建的时候发现类型不正确 isBuildable： ")
-	}
 }
 
 
