@@ -64,10 +64,6 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{})
 // 1. 一般都是 fun 类型
 // 2. 这里也允许让其他的部分类型通过
 func (_ *BuildOfContainer) isBuildable(abstract interface{}, concrete interface{}) bool {
-
-	if reflect.DeepEqual(abstract, concrete) {
-		return true
-	}
 	switch reflect.TypeOf(concrete).Kind() {
 	case reflect.Bool, reflect.String, reflect.Int, reflect.Float32, reflect.Float64:
 		fallthrough
