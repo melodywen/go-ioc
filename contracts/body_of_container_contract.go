@@ -3,6 +3,11 @@ package contracts
 type BodyOfContainerContract interface {
 	// DropStaleInstances 移除已经缓存的实例和别名
 	DropStaleInstances(abstract string)
+
+	// IsAlias 是否为别名
+	IsAlias(abstract interface{}) bool
+	// GetAlias 获取
+	GetAlias(abstract interface{}) interface{}
 	// Resolved 是否已经实例化过
 	Resolved(abstract interface{}) bool
 	// Rebound 再次绑定的操作
