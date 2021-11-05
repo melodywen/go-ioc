@@ -55,23 +55,19 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{})
 		}
 		return response
 	default:
-		fmt.Println(concreteType.Kind())
-		return concrete
+		fmt.Println("this concrete is :", concrete)
+		panic("Target [xxx] is not instantiable. please see upper logger")
 	}
 }
 
-// 判断可以进行构建
-// 1. 一般都是 fun 类型
-// 2. 这里也允许让其他的部分类型通过
-func (_ *BuildOfContainer) isBuildable(abstract interface{}, concrete interface{}) bool {
-	switch reflect.TypeOf(concrete).Kind() {
-	case reflect.Bool, reflect.String, reflect.Int, reflect.Float32, reflect.Float64:
-		fallthrough
-	case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
-		fallthrough
-	case reflect.Func, reflect.Chan, reflect.Interface, reflect.Ptr:
+// IsBuildable 判断可以进行构建
+// 1. 如果是自己等于自己则直接输出
+// 2. 如果是回调函数则保留
+// 3. 如果是其他的类型，说明还不够，需要进行递归获取
+func (_ *BuildOfContainer) IsBuildable(abstract interface{}, concrete interface{}) bool {
+
+	if reflect.DeepEqual(abstract, concrete) {
 		return true
-	default:
-		panic("判定是否可以构建的时候发现类型不正确 isBuildable： ")
 	}
+	return reflect.TypeOf(concrete).Kind() == reflect.Func
 }

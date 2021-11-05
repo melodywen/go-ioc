@@ -106,12 +106,26 @@ func TestBuildOfContainer_isBuildable(t *testing.T) {
 				concrete: mock.NewAnimal,
 			},
 			want: true,
+		}, {
+			name: "如果不是回调false",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: 3,
+			},
+			want: false,
+		}, {
+			name: "如果完全雷同",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: mock.Animal{},
+			},
+			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			bu := &BuildOfContainer{}
-			if got := bu.isBuildable(tt.args.abstract, tt.args.concrete); got != tt.want {
+			if got := bu.IsBuildable(tt.args.abstract, tt.args.concrete); got != tt.want {
 				t.Errorf("isBuildable() = %v, want %v", got, tt.want)
 			}
 		})
