@@ -10,26 +10,30 @@ type BodyOfContainer struct {
 	bindings  map[string]Bind        // 绑定的策略及其配置
 	resolved  map[string]bool        // 是否最终解析成功
 
+	aliases map[string]string // abstract 对应的别名
+
 	BuildOfContainer
 	CommonOfContainer
 }
 
 // 用于测试使用
 func newBodyOfContainer() *BodyOfContainer {
-	instances := map[string]interface{}{}
-	bindings := map[string]Bind{}
-	resolved := map[string]bool{}
-	return &BodyOfContainer{instances: instances, bindings: bindings, resolved: resolved}
+	return &BodyOfContainer{
+		instances: map[string]interface{}{},
+		bindings:  map[string]Bind{},
+		resolved:  map[string]bool{},
+		aliases:   map[string]string{},
+	}
 }
 
-// DropStaleInstances 移除已经缓存的实例å
-func (body *BodyOfContainer) DropStaleInstances(abstract interface{}) bool {
-	index := body.AbstractToString(abstract)
-	if _, ok := body.instances[index]; ok {
-		delete(body.instances, index)
-		return true
+// DropStaleInstances 移除已经缓存的实例 和别名
+func (body *BodyOfContainer) DropStaleInstances(abstract string)  {
+	if _, ok := body.instances[abstract]; ok {
+		delete(body.instances, abstract)
 	}
-	return false
+	if _, ok := body.aliases[abstract]; ok {
+		delete(body.aliases, abstract)
+	}
 }
 
 // Resolved 是否已经实例化过

@@ -10,36 +10,54 @@ import (
 func TestBodyOfContainer_DropStaleInstances(t *testing.T) {
 	type fields struct {
 		instances map[string]interface{}
+		aliases   map[string]string
 	}
 	type args struct {
-		abstract interface{}
+		abstract string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
-		want   bool
+		want   *BodyOfContainer
 	}{
-		// TODO: Add test cases.
 		{
-			name:   "测试如果是命中删除",
-			fields: fields{instances: map[string]interface{}{"abc": 1}},
-			args:   args{abstract: "abc"},
-			want:   true,
+			name: "测试移除实例",
+			fields: fields{
+				instances: map[string]interface{}{"aa": 1},
+				aliases:   map[string]string{"ab": "aa"},
+			},
+			args: args{abstract: "ab"},
+			want: &BodyOfContainer{
+				instances: map[string]interface{}{"aa": 1},
+				aliases:   map[string]string{},
+			},
 		}, {
-			name:   "测试如果是没有命中",
-			fields: fields{instances: map[string]interface{}{"abc": 1}},
-			args:   args{abstract: "abcc"},
-			want:   false,
+			name: "测试移除实例",
+			fields: fields{
+				instances: map[string]interface{}{"ab": 1},
+				aliases:   map[string]string{"ab": "aa"},
+			},
+			args: args{abstract: "ab"},
+			want: &BodyOfContainer{
+				instances: map[string]interface{}{},
+				aliases:   map[string]string{},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			body := &BodyOfContainer{
 				instances: tt.fields.instances,
+				aliases:   tt.fields.aliases,
 			}
-			if got := body.DropStaleInstances(tt.args.abstract); got != tt.want {
-				t.Errorf("DropStaleInstances() = %v, want %v", got, tt.want)
+			body.DropStaleInstances(tt.args.abstract)
+			if !reflect.DeepEqual(body, tt.want) {
+				fmt.Println(body)
+				fmt.Println(tt.want)
+				t.Errorf("Resolved() = %v, want %v", tt.want, body)
+			} else {
+				//fmt.Println(body)
 			}
 		})
 	}

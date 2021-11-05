@@ -1,8 +1,8 @@
 package contracts
 
 type BodyOfContainerContract interface {
-	// DropStaleInstances 移除已经缓存的实例å
-	DropStaleInstances(abstract interface{}) bool
+	// DropStaleInstances 移除已经缓存的实例和别名
+	DropStaleInstances(abstract string)
 	// Resolved 是否已经实例化过
 	Resolved(abstract interface{}) bool
 	// Rebound 再次绑定的操作
