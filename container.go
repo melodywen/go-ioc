@@ -10,7 +10,7 @@ func newContainer() *Container {
 	structOfContainer := &Container{
 		StructOfContainer: StructOfContainer{
 			resolved:                       nil,
-			bindings:                       nil,
+			bindings:                       map[string]Bind{},
 			instances:                      nil,
 			aliases:                        nil,
 			abstractAliases:                nil,

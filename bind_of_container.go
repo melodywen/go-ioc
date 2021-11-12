@@ -1,6 +1,8 @@
 package container
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // Bind 绑定接口
 func (container *Container) Bind(abstract interface{}, concrete interface{}, shared bool) {
@@ -10,10 +12,16 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	// 删除老旧的实例
 	container.dropStaleInstances(index)
 
+	// If no concrete type was given, we will simply set the concrete type to the
+	// abstract type. After that, the concrete type to be registered as shared
+	// without being forced to state their classes in both of the parameters.
 	if concrete == nil {
 		concrete = abstract
 	}
 
+	// If the factory is not a Closure, it means it is just a class name which is
+	// bound into this container to the abstract type and we will just wrap it
+	// up inside its own Closure to give us more convenience when extending.
 	if reflect.TypeOf(concrete).Kind() != reflect.Func {
 		// todo 等待完成
 		//concrete = container.getClosure(index, concrete)
@@ -23,6 +31,9 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	container.bindings[index] = Bind{shared: shared, concrete: concrete}
 
 	// 如果是之前已经绑定过则再次重新绑定 todo 等待完成
+	// If the abstract type was already resolved in this container we'll fire the
+	// rebound listener so that any objects which have already gotten resolved
+	// can have their copy of the object updated via the listener callbacks.
 	if container.Resolved(abstract) {
 		//container.Rebound(index)
 	}
