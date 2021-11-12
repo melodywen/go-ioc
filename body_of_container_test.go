@@ -299,7 +299,7 @@ func TestBodyOfContainer_GetConcrete(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			body := newBodyOfContainer()
 			body.Bind(tt.fields.abstract, tt.fields.concrete, true)
-			gotConcrete := body.GetConcrete(tt.args.abstract)
+			gotConcrete := body.GetConcrete(body.AbstractToString(tt.args.abstract))
 			result := true
 			if reflect.TypeOf(gotConcrete).Kind() == reflect.Func {
 				result = reflect.ValueOf(gotConcrete).Pointer() != reflect.ValueOf(tt.wantConcrete).Pointer()

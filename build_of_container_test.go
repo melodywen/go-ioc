@@ -53,9 +53,9 @@ func TestBuildOfContainer_Build(t *testing.T) {
 			},
 		},
 		{
-			name: "测试如果是一个标量，则直接返回",
+			name: "测试如果是一个标量,则直接报错",
 			args: args{
-				concrete:   mock.NewAnimalAndParam,
+				concrete:   []interface{}{"小猫", 2, "猫科"},
 				parameters: []interface{}{"小猫", 2, "猫科"},
 			},
 			wantObject: []interface{}{
@@ -125,7 +125,7 @@ func TestBuildOfContainer_isBuildable(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			bu := &BuildOfContainer{}
-			if got := bu.IsBuildable(tt.args.abstract, tt.args.concrete); got != tt.want {
+			if got := bu.isBuildable(tt.args.abstract, tt.args.concrete); got != tt.want {
 				t.Errorf("isBuildable() = %v, want %v", got, tt.want)
 			}
 		})

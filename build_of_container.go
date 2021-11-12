@@ -60,11 +60,11 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{})
 	}
 }
 
-// IsBuildable 判断可以进行构建
+// isBuildable 判断可以进行构建
 // 1. 如果是自己等于自己则直接输出
 // 2. 如果是回调函数则保留
 // 3. 如果是其他的类型，说明还不够，需要进行递归获取
-func (_ *BuildOfContainer) IsBuildable(abstract interface{}, concrete interface{}) bool {
+func (_ *BuildOfContainer) isBuildable(abstract interface{}, concrete interface{}) bool {
 
 	if reflect.DeepEqual(abstract, concrete) {
 		return true

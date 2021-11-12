@@ -5,11 +5,6 @@ import (
 	"reflect"
 )
 
-type Bind struct {
-	shared   bool
-	concrete interface{}
-}
-
 type BodyOfContainer struct {
 	instances map[string]interface{} // 绑定的实例 ， 如果他是单例模式则全部存储到这里面
 	bindings  map[string]Bind        // 绑定的策略及其配置
@@ -199,7 +194,7 @@ func (body *BodyOfContainer) resolve(abstract string, parameters []interface{}, 
 	concrete := body.GetConcrete(abstract)
 
 	// 如果可以构建则直接构建 否则递归判定
-	if body.IsBuildable(abstract, concrete) {
+	if body.isBuildable(abstract, concrete) {
 		object = body.Build(concrete, parameters)
 	} else {
 		object = body.MakeWithParams(concrete, parameters)
