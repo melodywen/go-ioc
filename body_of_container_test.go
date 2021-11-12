@@ -9,58 +9,6 @@ import (
 
 
 
-func TestBodyOfContainer_Resolved(t *testing.T) {
-	type fields struct {
-		instances map[string]interface{}
-		resolved  map[string]bool
-	}
-	type args struct {
-		abstract interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "如果在instance 中",
-			fields: fields{
-				instances: map[string]interface{}{"cjw.com/melodywen/go-ioc/mock.Animal": 1},
-			},
-			args: args{abstract: mock.Animal{}},
-			want: true,
-		},
-		{
-			name: "如果在resolved 中",
-			fields: fields{
-				resolved: map[string]bool{"cjw.com/melodywen/go-ioc/mock.Animal": true},
-			},
-			args: args{abstract: mock.Animal{}},
-			want: true,
-		},
-		{
-			name: "如果都不在中",
-			fields: fields{
-				resolved: map[string]bool{"*cjw.com/melodywen/go-ioc/mock.Animal": true},
-			},
-			args: args{abstract: mock.Animal{}},
-			want: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			body := &BodyOfContainer{
-				instances: tt.fields.instances,
-				resolved:  tt.fields.resolved,
-			}
-			if got := body.Resolved(tt.args.abstract); got != tt.want {
-				t.Errorf("Resolved() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestBodyOfContainer_Bind(t *testing.T) {
 	type fields struct {

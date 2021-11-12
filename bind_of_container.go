@@ -23,19 +23,37 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	container.bindings[index] = Bind{shared: shared, concrete: concrete}
 
 	// 如果是之前已经绑定过则再次重新绑定 todo 等待完成
-	//if container.Resolved(abstract) {
-	//	container.Rebound(index)
-	//}
+	if container.Resolved(abstract) {
+		//container.Rebound(index)
+	}
 }
 
 // dropStaleInstances
 // 移除已经缓存的实例 和别名
 func (container *Container) dropStaleInstances(abstract string) (ok bool) {
-	if _, ok = container.instances[abstract]; ok {
+	if _, exist := container.instances[abstract]; exist {
 		delete(container.instances, abstract)
+		ok = true
 	}
-	if _, ok = container.aliases[abstract]; ok {
+	if _, exist := container.aliases[abstract]; exist {
 		delete(container.aliases, abstract)
+		ok = true
+	}
+	return ok
+}
+
+// Resolved 是否已经实例化过
+func (container *Container) Resolved(abstract interface{}) (ok bool) {
+	if container.IsAlias(abstract) {
+		abstract = container.GetAlias(abstract)
+	}
+	index := container.AbstractToString(abstract)
+
+	if _, exist := container.resolved[index]; exist {
+		ok = true
+	}
+	if _, exist := container.instances[index]; exist {
+		ok = true
 	}
 	return ok
 }
