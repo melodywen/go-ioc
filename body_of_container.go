@@ -15,7 +15,7 @@ type BodyOfContainer struct {
 	extenders        map[string][]interface{} // 当make 出来的数据做多层装饰器
 
 	BuildOfContainer
-	CommonOfContainer
+	ExtendOfContainer
 }
 
 // 用于测试使用

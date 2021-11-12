@@ -39,8 +39,8 @@ func TestCommonOfContainer_AbstractToString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			common := &CommonOfContainer{}
-			if got := common.AbstractToString(tt.args.abstract); got != tt.want {
+			extend := &ExtendOfContainer{}
+			if got := extend.AbstractToString(tt.args.abstract); got != tt.want {
 				t.Errorf("AbstractToString() = %v, want %v", got, tt.want)
 			}
 		})

@@ -7,61 +7,7 @@ import (
 	"testing"
 )
 
-func TestBodyOfContainer_DropStaleInstances(t *testing.T) {
-	type fields struct {
-		instances map[string]interface{}
-		aliases   map[string]string
-	}
-	type args struct {
-		abstract string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   *BodyOfContainer
-	}{
-		{
-			name: "测试移除实例",
-			fields: fields{
-				instances: map[string]interface{}{"aa": 1},
-				aliases:   map[string]string{"ab": "aa"},
-			},
-			args: args{abstract: "ab"},
-			want: &BodyOfContainer{
-				instances: map[string]interface{}{"aa": 1},
-				aliases:   map[string]string{},
-			},
-		}, {
-			name: "测试移除实例",
-			fields: fields{
-				instances: map[string]interface{}{"ab": 1},
-				aliases:   map[string]string{"ab": "aa"},
-			},
-			args: args{abstract: "ab"},
-			want: &BodyOfContainer{
-				instances: map[string]interface{}{},
-				aliases:   map[string]string{},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			body := &BodyOfContainer{
-				instances: tt.fields.instances,
-				aliases:   tt.fields.aliases,
-			}
-			body.DropStaleInstances(tt.args.abstract)
-			if !reflect.DeepEqual(body, tt.want) {
-				fmt.Println(body)
-				fmt.Println(tt.want)
-				t.Errorf("Resolved() = %v, want %v", tt.want, body)
-			} else {
-				//fmt.Println(body)
-			}
-		})
-	}
-}
+
 
 func TestBodyOfContainer_Resolved(t *testing.T) {
 	type fields struct {
@@ -122,7 +68,7 @@ func TestBodyOfContainer_Bind(t *testing.T) {
 		bindings          map[string]Bind
 		resolved          map[string]bool
 		BuildOfContainer  BuildOfContainer
-		CommonOfContainer CommonOfContainer
+		ExtendOfContainer ExtendOfContainer
 	}
 	type args struct {
 		abstract interface{}
@@ -208,7 +154,7 @@ func TestBodyOfContainer_IsShared(t *testing.T) {
 		bindings          map[string]Bind
 		resolved          map[string]bool
 		BuildOfContainer  BuildOfContainer
-		CommonOfContainer CommonOfContainer
+		ExtendOfContainer ExtendOfContainer
 	}
 	type args struct {
 		abstract string
@@ -244,7 +190,7 @@ func TestBodyOfContainer_IsShared(t *testing.T) {
 				bindings:          tt.fields.bindings,
 				resolved:          tt.fields.resolved,
 				BuildOfContainer:  tt.fields.BuildOfContainer,
-				CommonOfContainer: tt.fields.CommonOfContainer,
+				ExtendOfContainer: tt.fields.ExtendOfContainer,
 			}
 			if got := body.IsShared(tt.args.abstract); got != tt.want {
 				t.Errorf("IsShared() = %v, want %v", got, tt.want)
