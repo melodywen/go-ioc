@@ -9,9 +9,9 @@ type Container struct {
 func newContainer() *Container {
 	structOfContainer := &Container{
 		StructOfContainer: StructOfContainer{
-			resolved:                       nil,
+			resolved:                       map[string]bool{},
 			bindings:                       map[string]Bind{},
-			instances:                      nil,
+			instances:                      map[string]interface{}{},
 			aliases:                        nil,
 			abstractAliases:                nil,
 			extenders:                      nil,

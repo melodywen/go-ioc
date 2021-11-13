@@ -36,7 +36,7 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 	// We're ready to instantiate an instance of the concrete type registered for
 	// the binding. This will instantiate the types, as well as resolve any of
 	// its "nested" dependencies recursively until all have gotten resolved.
-	if container.isBuildable(abstract, container) {
+	if container.isBuildable(abstract, concrete) {
 		object = container.Build(concrete, parameters)
 	} else {
 		object = container.MakeWithParams(concrete, parameters)
