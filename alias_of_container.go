@@ -8,10 +8,25 @@ func (container *Container) IsAlias(abstract interface{}) (ok bool) {
 }
 
 // GetAlias 获取
-func (container *Container)GetAlias(abstract interface{}) string {
+func (container *Container) GetAlias(abstract interface{}) string {
 	index := container.AbstractToString(abstract)
 	if _, ok := container.aliases[index]; ok {
 		return container.GetAlias(container.aliases[index])
 	}
 	return index
+}
+
+// Alias 设置别名
+func (container *Container) Alias(abstract interface{}, alias interface{}) {
+	abstractStr := container.AbstractToString(abstract)
+	aliasStr := container.AbstractToString(alias)
+	if aliasStr == abstractStr {
+		// todo 抛错异常得修改
+		panic("[{$abstract}] is aliased to itself.")
+	}
+	container.aliases[aliasStr] = abstractStr
+	if container.abstractAliases[abstractStr] == nil {
+		container.abstractAliases[abstractStr] = []string{}
+	}
+	container.abstractAliases[abstractStr] = append(container.abstractAliases[abstractStr], aliasStr)
 }

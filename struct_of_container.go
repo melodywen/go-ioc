@@ -17,8 +17,8 @@ type StructOfContainer struct {
 	/**
 	别名
 	*/
-	aliases         map[string]string            // abstract 对应的别名
-	abstractAliases map[string]map[string]string // 存放指定的 abstract别名的集合
+	aliases         map[string]string   // abstract 对应的别名
+	abstractAliases map[string][]string // 存放指定的 abstract别名的集合
 
 	/**
 	回调函数
