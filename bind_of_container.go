@@ -35,6 +35,7 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	// rebound listener so that any objects which have already gotten resolved
 	// can have their copy of the object updated via the listener callbacks.
 	if container.Resolved(abstract) {
+		// todo 等待完成
 		//container.Rebound(index)
 	}
 }
@@ -69,6 +70,7 @@ func (container *Container) Resolved(abstract interface{}) (ok bool) {
 	return false
 }
 
+// Bound Determine if the given abstract type has been bound.
 func (container *Container) Bound(abstract interface{}) (ok bool) {
 	index := container.AbstractToString(abstract)
 
@@ -82,4 +84,25 @@ func (container *Container) Bound(abstract interface{}) (ok bool) {
 		return true
 	}
 	return false
+}
+
+// Instance Register an existing instance as shared in the container.
+func (container *Container) Instance(abstract interface{}, instance interface{}) interface{} {
+	index := container.AbstractToString(abstract)
+	container.removeAbstractAlias(index)
+	if _, ok := container.aliases[index]; ok {
+		delete(container.aliases, index)
+	}
+
+	// We'll check to determine if this type has been bound before, and if it has
+	// we will fire the rebound callbacks registered with the container and it
+	// can be updated with consuming classes that have gotten resolved here.
+	container.instances[index] = instance
+
+	isBound := container.Bound(index)
+	if isBound {
+		// todo 等待完成
+		//container.Rebound(index)
+	}
+	return instance
 }

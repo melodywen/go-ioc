@@ -3,6 +3,7 @@ package container
 import (
 	"cjw.com/melodywen/go-ioc/mock"
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -137,18 +138,57 @@ func TestContainer_Bound(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			container.Bind(mock.Animal{}, mock.NewAnimal, false)
 			if gotOk := container.Bound(mock.Animal{}); gotOk != true {
-				t.Errorf("Bound() = %v, want %v", gotOk,true)
+				t.Errorf("Bound() = %v, want %v", gotOk, true)
 			}
-			container.Bind(mock.NewAnimalAndParam, func() *mock.Animal {
+			container.Instance(mock.NewAnimalAndParam, func() *mock.Animal {
 				return mock.NewAnimal("dog", 12, "cate")
-			}, true)
-			container.MakeWithParams(mock.NewAnimalAndParam, []interface{}{})
+			})
+			//container.MakeWithParams(mock.NewAnimalAndParam, []interface{}{})
 			if gotOk := container.Bound(mock.NewAnimalAndParam); gotOk != true {
 				t.Errorf("Bound() = %v, want %v", gotOk, tt.wantOk)
 			}
-			container.Alias(mock.Animal{},"aabb")
+			container.Alias(mock.Animal{}, "aabb")
 			if gotOk := container.Bound("aabb"); gotOk != true {
 				t.Errorf("Bound() = %v, want %v", gotOk, tt.wantOk)
+			}
+		})
+	}
+}
+
+func TestContainer_Instance(t *testing.T) {
+	type fields struct {
+		abstract interface{}
+		instance interface{}
+	}
+	type args struct {
+		abstract interface{}
+		instance interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   interface{}
+	}{
+		// TODO: Add test cases.
+		{
+			name: "测试如果在别名 和 bind 中则都进行删除",
+			want: mock.NewAnimal("dog", 12, "cat"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container := newContainer()
+			container.Bind(mock.Animal{}, func() *mock.Animal {
+				return mock.NewAnimal("dog", 12, "cat")
+			}, true)
+			container.Alias(mock.Animal{}, mock.NewAnimalAndParam)
+			container.MakeWithParams(mock.Animal{}, []interface{}{})
+			//fmt.Println(container)
+			got := container.Instance(mock.NewAnimalAndParam, mock.NewAnimal("dog", 12, "cat"))
+			//fmt.Println(container)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Instance() = %v, want %v", got, tt.want)
 			}
 		})
 	}
