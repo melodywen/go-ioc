@@ -30,30 +30,36 @@ func (container *Container) getReboundCallbacks(abstract string) []func(containe
 }
 
 // Get the extender callbacks for a given type.
-func (container *Container) getExtenders(abstract string) []interface{} {
+func (container *Container) getExtenders(abstract string) []func(object interface{}, container *Container) interface{} {
 	if _, ok := container.extenders[abstract]; ok {
 		return container.extenders[abstract]
 	}
-	return []interface{}{}
+	return []func(object interface{}, container *Container) interface{}{}
 }
 
-// Remove all of the extender callbacks for a given type.
-func (container *Container) forgetExtenders(abstract string) (ok bool) {
-	if _, ok := container.extenders[abstract]; ok {
-		delete(container.extenders, abstract)
+// ForgetExtenders Remove all of the extender callbacks for a given type.
+func (container *Container) ForgetExtenders(abstract interface{}) (ok bool) {
+	index := container.GetAlias(abstract)
+	if _, ok := container.extenders[index]; ok {
+		delete(container.extenders, index)
 		return true
 	}
 	return false
 }
 
 // Extend "Extend" an abstract type in the container
-func (container *Container) Extend(abstract string, closure func(interface{}, *Container) interface{}) (ok bool) {
-	abstract = container.GetAlias(abstract)
-
-	// TODO 待完成
-	if _, ok := container.instances[abstract]; ok {
-		container.instances[abstract] = closure(container.instances[abstract], container)
+func (container *Container) Extend(abstract interface{}, closure func(object interface{}, container *Container) interface{}) {
+	index := container.GetAlias(abstract)
+	if _, ok := container.instances[index]; ok {
+		container.instances[index] = closure(container.instances[index], container)
+		container.rebound(index)
+	} else {
+		if _, ok := container.extenders[index]; !ok {
+			container.extenders[index] = []func(object interface{}, container *Container) interface{}{}
+		}
+		container.extenders[index] = append(container.extenders[index], closure)
+		if container.Resolved(index) {
+			container.rebound(index)
+		}
 	}
-
-	return false
 }

@@ -14,7 +14,7 @@ func newContainer() *Container {
 			instances:                      map[string]interface{}{},
 			aliases:                        map[string]string{},
 			abstractAliases:                map[string][]string{},
-			extenders:                      nil,
+			extenders:                      map[string][]func(object interface{}, container *Container) interface{}{},
 			reboundCallbacks:               map[string][]func(container *Container, instance interface{}){},
 			globalBeforeResolvingCallbacks: nil,
 			globalResolvingCallbacks:       nil,

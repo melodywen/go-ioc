@@ -51,10 +51,9 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 	// If we defined any extenders for this type, we'll need to spin through them
 	// and apply them to the object being built. This allows for the extension
 	// of services, such as changing configuration or decorating the object.
-	// todo 回调函数
-	//foreach ($this->getExtenders($abstract) as $extender) {
-	//	$object = $extender($object, $this);
-	//}
+	for _, extender := range container.getExtenders(abstract) {
+		object = extender(object, container)
+	}
 
 	// If the requested type is registered as a singleton we'll want to cache off
 	// the instances in "memory" so we can return it later without creating an
