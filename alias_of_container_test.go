@@ -125,3 +125,57 @@ func TestContainer_Alias(t *testing.T) {
 		})
 	}
 }
+
+func TestContainer_removeAbstractAlias(t *testing.T) {
+	type fields struct {
+		abstract interface{}
+		alias    interface{}
+	}
+	type args struct {
+		search string
+	}
+	tests := []struct {
+		name   string
+		fields []fields
+		args   args
+		wantOk bool
+	}{
+		{
+			name: "简单测试单个",
+			fields: []fields{
+				{
+					alias:    "abc",
+					abstract: mock.NewAnimalAndParam,
+				},
+			},
+			args:   args{search: "abc"},
+			wantOk: true,
+		},
+		{
+			name: "简单测试多个",
+			fields: []fields{
+				{
+					alias:    "bbc",
+					abstract: mock.NewAnimalAndParam,
+				}, {
+					alias:    "bbcc",
+					abstract: mock.NewAnimalAndParam,
+				},
+			},
+			args:   args{search: "abc"},
+			wantOk: false,
+		},
+	}
+	container := newContainer()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, field := range tt.fields {
+				container.Alias(field.abstract, field.alias)
+			}
+			gotOk := container.removeAbstractAlias(tt.args.search)
+			if gotOk != tt.wantOk {
+				t.Errorf("removeAbstractAlias() = %v, want %v", gotOk, tt.wantOk)
+			}
+		})
+	}
+}

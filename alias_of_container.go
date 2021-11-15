@@ -1,5 +1,7 @@
 package container
 
+import "fmt"
+
 // IsAlias 是否为别名
 func (container *Container) IsAlias(abstract interface{}) (ok bool) {
 	index := container.AbstractToString(abstract)
@@ -29,4 +31,21 @@ func (container *Container) Alias(abstract interface{}, alias interface{}) {
 		container.abstractAliases[abstractStr] = []string{}
 	}
 	container.abstractAliases[abstractStr] = append(container.abstractAliases[abstractStr], aliasStr)
+}
+
+//  Remove an alias from the contextual binding alias cache.
+func (container *Container) removeAbstractAlias(search string) (ok bool) {
+	if _, ok := container.aliases[search]; !ok {
+		return false
+	}
+	for abstract, aliases := range container.abstractAliases {
+		for index, alias := range aliases {
+			fmt.Println(alias, index)
+			if alias == search {
+				container.abstractAliases[abstract] = append(aliases[:index], aliases[index+1:]...)
+				ok = true
+			}
+		}
+	}
+	return ok
 }
