@@ -23,8 +23,8 @@ type StructOfContainer struct {
 	/**
 	回调函数
 	*/
-	extenders        map[string][]interface{} // 当make 出来的数据做多层装饰器
-	reboundCallbacks map[string][]interface{} // 重新绑定的回调函数
+	extenders        map[string][]interface{}                                      // 当make 出来的数据做多层装饰器
+	reboundCallbacks map[string][]func(container *Container, instance interface{}) // 重新绑定的回调函数
 
 	globalBeforeResolvingCallbacks []string // 全局的回调函数-前置
 	globalResolvingCallbacks       []string // 全局的回调函数-调用时候

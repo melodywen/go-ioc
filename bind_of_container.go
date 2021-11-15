@@ -30,13 +30,12 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	// 直接进行绑定
 	container.bindings[index] = Bind{shared: shared, concrete: concrete}
 
-	// 如果是之前已经绑定过则再次重新绑定 todo 等待完成
+	// 如果是之前已经绑定过则再次重新绑定
 	// If the abstract type was already resolved in this container we'll fire the
 	// rebound listener so that any objects which have already gotten resolved
 	// can have their copy of the object updated via the listener callbacks.
 	if container.Resolved(abstract) {
-		// todo 等待完成
-		//container.Rebound(index)
+		container.rebound(index)
 	}
 }
 
@@ -101,8 +100,7 @@ func (container *Container) Instance(abstract interface{}, instance interface{})
 
 	isBound := container.Bound(index)
 	if isBound {
-		// todo 等待完成
-		//container.Rebound(index)
+		container.rebound(index)
 	}
 	return instance
 }

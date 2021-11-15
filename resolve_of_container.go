@@ -1,9 +1,15 @@
 package container
 
-// MakeWithParams 对外暴露make 方法并且
+// MakeWithParams 对外暴露make 方法并且携带参数
 func (container *Container) MakeWithParams(abstract interface{}, parameters []interface{}) interface{} {
 	index := container.AbstractToString(abstract)
 	return container.resolve(index, parameters, true)
+}
+
+// Make 对外暴露make 方法
+func (container *Container) Make(abstract interface{}) interface{} {
+	index := container.AbstractToString(abstract)
+	return container.resolve(index, []interface{}{}, true)
 }
 
 // resolve 进行解析
