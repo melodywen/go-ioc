@@ -52,17 +52,17 @@ func TestBuildOfContainer_Build(t *testing.T) {
 				"小猫", 2, "猫科",
 			},
 		},
-		{
-			name: "测试如果是一个标量,则直接报错",
-			args: args{
-				concrete:   []interface{}{"小猫", 2, "猫科"},
-				parameters: []interface{}{"小猫", 2, "猫科"},
-			},
-			wantObject: []interface{}{
-				mock.NewAnimal("小猫", 2, "猫科"),
-				"小猫", 2, "猫科",
-			},
-		},
+		//{
+		//	name: "测试如果是一个标量,则直接报错",
+		//	args: args{
+		//		concrete:   []interface{}{"小猫", 2, "猫科"},
+		//		parameters: []interface{}{"小猫", 2, "猫科"},
+		//	},
+		//	wantObject: []interface{}{
+		//		mock.NewAnimal("小猫", 2, "猫科"),
+		//		"小猫", 2, "猫科",
+		//	},
+		//},
 		// todo 待实现 （完成动态代理功能）
 		//{
 		//	name: "测试如果是一个结构体，则直接进行实例化",
