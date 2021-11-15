@@ -115,3 +115,41 @@ func TestContainer_Resolved(t *testing.T) {
 		})
 	}
 }
+
+func TestContainer_Bound(t *testing.T) {
+	type fields struct {
+	}
+	type args struct {
+		abstract interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		wantOk bool
+	}{
+		{
+			name: "测试",
+		},
+	}
+	container := newContainer()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container.Bind(mock.Animal{}, mock.NewAnimal, false)
+			if gotOk := container.Bound(mock.Animal{}); gotOk != true {
+				t.Errorf("Bound() = %v, want %v", gotOk,true)
+			}
+			container.Bind(mock.NewAnimalAndParam, func() *mock.Animal {
+				return mock.NewAnimal("dog", 12, "cate")
+			}, true)
+			container.MakeWithParams(mock.NewAnimalAndParam, []interface{}{})
+			if gotOk := container.Bound(mock.NewAnimalAndParam); gotOk != true {
+				t.Errorf("Bound() = %v, want %v", gotOk, tt.wantOk)
+			}
+			container.Alias(mock.Animal{},"aabb")
+			if gotOk := container.Bound("aabb"); gotOk != true {
+				t.Errorf("Bound() = %v, want %v", gotOk, tt.wantOk)
+			}
+		})
+	}
+}

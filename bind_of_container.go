@@ -61,10 +61,25 @@ func (container *Container) Resolved(abstract interface{}) (ok bool) {
 	index := container.AbstractToString(abstract)
 
 	if _, exist := container.resolved[index]; exist {
-		ok = true
+		return true
 	}
 	if _, exist := container.instances[index]; exist {
-		ok = true
+		return true
 	}
-	return ok
+	return false
+}
+
+func (container *Container) Bound(abstract interface{}) (ok bool) {
+	index := container.AbstractToString(abstract)
+
+	if _, exist := container.bindings[index]; exist {
+		return true
+	}
+	if _, exist := container.instances[index]; exist {
+		return true
+	}
+	if container.IsAlias(index) {
+		return true
+	}
+	return false
 }

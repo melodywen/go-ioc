@@ -1,7 +1,5 @@
 package container
 
-import "fmt"
-
 // IsAlias 是否为别名
 func (container *Container) IsAlias(abstract interface{}) (ok bool) {
 	index := container.AbstractToString(abstract)
@@ -40,7 +38,6 @@ func (container *Container) removeAbstractAlias(search string) (ok bool) {
 	}
 	for abstract, aliases := range container.abstractAliases {
 		for index, alias := range aliases {
-			fmt.Println(alias, index)
 			if alias == search {
 				container.abstractAliases[abstract] = append(aliases[:index], aliases[index+1:]...)
 				ok = true
