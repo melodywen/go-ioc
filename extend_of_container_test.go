@@ -14,7 +14,6 @@ func TestCommonOfContainer_AbstractToString(t *testing.T) {
 		args args
 		want string
 	}{
-		// TODO: Add test cases.
 		{
 			name: "测试字符串",
 			args: args{abstract: "abc"},

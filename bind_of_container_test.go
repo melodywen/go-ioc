@@ -170,7 +170,6 @@ func TestContainer_Instance(t *testing.T) {
 		args   args
 		want   interface{}
 	}{
-		// TODO: Add test cases.
 		{
 			name: "测试如果在别名 和 bind 中则都进行删除",
 			want: mock.NewAnimal("dog", 12, "cat"),

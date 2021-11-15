@@ -16,7 +16,6 @@ func TestBuildOfContainer_Build(t *testing.T) {
 		args       args
 		wantObject interface{}
 	}{
-		// TODO: Add test cases.
 		{
 			name: "测试如果是一个回调函数，并且返回一个参数",
 			args: args{
@@ -98,7 +97,6 @@ func TestBuildOfContainer_isBuildable(t *testing.T) {
 		args args
 		want bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "简单测试一下",
 			args: args{
