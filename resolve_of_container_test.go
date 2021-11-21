@@ -32,27 +32,35 @@ func TestContainer_getConcrete(t *testing.T) {
 			args:         args{abstract: "cjw.com/melodywen/go-ioc/mock.Animal"},
 			wantConcrete: mock.NewAnimal,
 		},
-		//{
-		//	name: "第一轮测试,测试指指针",
-		//	fields: fields{
-		//		abstract: &mock.Animal{},
-		//		concrete: *mock.NewAnimal("dog", 18, "cate"),
-		//		shared:   false,
-		//	},
-		//	args:         args{abstract: "*cjw.com/melodywen/go-ioc/mock.Animal"},
-		//	wantConcrete: *mock.NewAnimal("dog", 18, "cate"),
-		//},
+		{
+			name: "第一轮测试,如果不存在呢",
+			fields: fields{
+				abstract: &mock.Animal{},
+				concrete: mock.NewAnimal,
+				shared:   false,
+			},
+			args:         args{abstract: "cjw.com/melodywen/go-ioc/mock.Animal"},
+			wantConcrete: "cjw.com/melodywen/go-ioc/mock.Animal",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			container := newContainer()
 			container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
-			gotConcrete := container.getConcrete(tt.args.abstract);
-			sf1 := reflect.ValueOf(gotConcrete)
-			sf2 := reflect.ValueOf(tt.wantConcrete)
-			if sf1.Pointer() != sf2.Pointer() {
-				t.Errorf("getConcrete() = %v, want %v", gotConcrete, tt.wantConcrete)
+			gotConcrete := container.getConcrete(tt.args.abstract)
+
+			if reflect.TypeOf(tt.wantConcrete).Kind() == reflect.Func {
+				sf1 := reflect.ValueOf(gotConcrete)
+				sf2 := reflect.ValueOf(tt.wantConcrete)
+				if sf1.Pointer() != sf2.Pointer() {
+					t.Errorf("getConcrete() = %v, want %v", gotConcrete, tt.wantConcrete)
+				}
+			} else {
+				if !reflect.DeepEqual(gotConcrete, tt.wantConcrete) {
+					t.Errorf("getConcrete() = %v, want %v", gotConcrete, tt.wantConcrete)
+				}
 			}
+
 		})
 	}
 }
@@ -101,7 +109,7 @@ func TestContainer_IsShared(t *testing.T) {
 			},
 			args: args{abstract: "abcc"},
 			want: false,
-		},{
+		}, {
 			name: "测试——如果在缓存中",
 			fields: fields{
 				abstract: mock.NewAnimal,
@@ -117,8 +125,8 @@ func TestContainer_IsShared(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			container := newContainer()
 			if tt.fields.instance != nil {
-				container.Instance(tt.fields.abstract,tt.fields.instance)
-			}else{
+				container.Instance(tt.fields.abstract, tt.fields.instance)
+			} else {
 				container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
 			}
 			if got := container.IsShared(tt.args.abstract); got != tt.want {
