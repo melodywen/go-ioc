@@ -23,8 +23,7 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	// bound into this container to the abstract type and we will just wrap it
 	// up inside its own Closure to give us more convenience when extending.
 	if reflect.TypeOf(concrete).Kind() != reflect.Func {
-		// todo 等待完成
-		//concrete = container.getClosure(index, concrete)
+		concrete = container.getClosure(index, container.AbstractToString(concrete))
 	}
 
 	// 直接进行绑定

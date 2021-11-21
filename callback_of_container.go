@@ -63,3 +63,13 @@ func (container *Container) Extend(abstract interface{}, closure func(object int
 		}
 	}
 }
+
+//  Get the Closure to be used when building a type.
+func (container *Container) getClosure(abstract string, concrete string) func() interface{} {
+	return func() interface{} {
+		if abstract == concrete {
+			return container.Build(concrete, []interface{}{})
+		}
+		return container.resolve(concrete, []interface{}{}, false)
+	}
+}

@@ -26,28 +26,31 @@ func TestContainer_getConcrete(t *testing.T) {
 			name: "第一轮测试,测试对象",
 			fields: fields{
 				abstract: mock.Animal{},
-				concrete: mock.NewAnimal("dog", 18, "cate"),
+				concrete: mock.NewAnimal,
 				shared:   false,
 			},
 			args:         args{abstract: "cjw.com/melodywen/go-ioc/mock.Animal"},
-			wantConcrete: mock.NewAnimal("dog", 18, "cate"),
+			wantConcrete: mock.NewAnimal,
 		},
-		{
-			name: "第一轮测试,测试指指针",
-			fields: fields{
-				abstract: &mock.Animal{},
-				concrete: *mock.NewAnimal("dog", 18, "cate"),
-				shared:   false,
-			},
-			args:         args{abstract: "*cjw.com/melodywen/go-ioc/mock.Animal"},
-			wantConcrete: *mock.NewAnimal("dog", 18, "cate"),
-		},
+		//{
+		//	name: "第一轮测试,测试指指针",
+		//	fields: fields{
+		//		abstract: &mock.Animal{},
+		//		concrete: *mock.NewAnimal("dog", 18, "cate"),
+		//		shared:   false,
+		//	},
+		//	args:         args{abstract: "*cjw.com/melodywen/go-ioc/mock.Animal"},
+		//	wantConcrete: *mock.NewAnimal("dog", 18, "cate"),
+		//},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			container := newContainer()
 			container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
-			if gotConcrete := container.getConcrete(tt.args.abstract); !reflect.DeepEqual(gotConcrete, tt.wantConcrete) {
+			gotConcrete := container.getConcrete(tt.args.abstract);
+			sf1 := reflect.ValueOf(gotConcrete)
+			sf2 := reflect.ValueOf(tt.wantConcrete)
+			if sf1.Pointer() != sf2.Pointer() {
 				t.Errorf("getConcrete() = %v, want %v", gotConcrete, tt.wantConcrete)
 			}
 		})
@@ -59,6 +62,7 @@ func TestContainer_IsShared(t *testing.T) {
 		abstract interface{}
 		concrete interface{}
 		shared   bool
+		instance interface{}
 	}
 	type args struct {
 		abstract string
@@ -97,12 +101,26 @@ func TestContainer_IsShared(t *testing.T) {
 			},
 			args: args{abstract: "abcc"},
 			want: false,
+		},{
+			name: "测试——如果在缓存中",
+			fields: fields{
+				abstract: mock.NewAnimal,
+				concrete: 1,
+				shared:   true,
+				instance: 1,
+			},
+			args: args{abstract: "cjw.com/melodywen/go-ioc/mock.NewAnimal"},
+			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			container := newContainer()
-			container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
+			if tt.fields.instance != nil {
+				container.Instance(tt.fields.abstract,tt.fields.instance)
+			}else{
+				container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
+			}
 			if got := container.IsShared(tt.args.abstract); got != tt.want {
 				fmt.Println(container)
 				t.Errorf("IsShared() = %v, want %v", got, tt.want)
@@ -116,6 +134,7 @@ func TestContainer_MakeWithParams(t *testing.T) {
 		abstract interface{}
 		concrete interface{}
 		shared   bool
+		alias    string
 	}
 	type args struct {
 		abstract   interface{}
@@ -186,6 +205,18 @@ func TestContainer_MakeWithParams(t *testing.T) {
 			},
 			args: args{
 				abstract:   "many-return-set",
+				parameters: []interface{}{},
+			},
+			want: []interface{}{mock.NewAnimal("dog", 2, "cate"), "dog", 2, "cate"},
+		}, {
+			name: "测试如果是实例化对象是个复杂的函数- bind 重复绑定",
+			fields: fields{
+				abstract: "alias-many-return-set-alias",
+				concrete: "many-return-set",
+				shared:   true,
+			},
+			args: args{
+				abstract:   "alias-many-return-set-alias",
 				parameters: []interface{}{},
 			},
 			want: []interface{}{mock.NewAnimal("dog", 2, "cate"), "dog", 2, "cate"},
