@@ -20,8 +20,7 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 	// specific types. This gives some hooks the chance to add various extends
 	// calls to change the resolution of objects that they're interested in.
 	if raiseEvents {
-		// todo 完成上报事件
-		//$this->fireBeforeResolvingCallbacks($abstract, $parameters);
+		container.fireBeforeResolvingCallbacks(abstract, parameters)
 	}
 
 	concrete := container.getContextualConcrete(abstract)

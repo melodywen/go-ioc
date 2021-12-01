@@ -26,11 +26,11 @@ type StructOfContainer struct {
 	extenders        map[string][]func(object interface{}, container *Container) interface{} // 当make 出来的数据做多层装饰器
 	reboundCallbacks map[string][]func(container *Container, instance interface{})           // 重新绑定的回调函数
 
-	globalBeforeResolvingCallbacks []string // 全局的回调函数-前置
-	globalResolvingCallbacks       []string // 全局的回调函数-调用时候
-	globalAfterResolvingCallbacks  []string // 全局的回调函数-后置
+	globalBeforeResolvingCallbacks []func(string, []interface{}, *Container) // 全局的回调函数-前置
+	globalResolvingCallbacks       []func(string, []interface{}, *Container) // 全局的回调函数-调用时候
+	globalAfterResolvingCallbacks  []func(string, []interface{}, *Container) // 全局的回调函数-后置
 
-	beforeResolvingCallbacks map[string]func() interface{} // 具体的接口回调事件——前置
-	resolvingCallbacks       map[string]func() interface{} // 全具体的接口回调事件——调用的时候
-	afterResolvingCallbacks  map[string]func() interface{} // 具体的接口回调事件——后置
+	beforeResolvingCallbacks map[string][]func(string, []interface{}, *Container) // 具体的接口回调事件——前置
+	resolvingCallbacks       map[string]func() interface{}                      // 全具体的接口回调事件——调用的时候
+	afterResolvingCallbacks  map[string]func() interface{}                      // 具体的接口回调事件——后置
 }

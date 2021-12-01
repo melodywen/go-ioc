@@ -37,7 +37,7 @@ func (container *Container) getExtenders(abstract string) []func(object interfac
 	return []func(object interface{}, container *Container) interface{}{}
 }
 
-// ForgetExtenders Remove all of the extender callbacks for a given type.
+// ForgetExtenders Remove all the extender callbacks for a given type.
 func (container *Container) ForgetExtenders(abstract interface{}) (ok bool) {
 	index := container.GetAlias(abstract)
 	if _, ok := container.extenders[index]; ok {
@@ -72,4 +72,41 @@ func (container *Container) getClosure(abstract string, concrete string) func() 
 		}
 		return container.resolve(concrete, []interface{}{}, false)
 	}
+}
+
+//Fire an array of callbacks with an object.
+func (container *Container) fireBeforeCallbackArray(
+	abstract string,
+	parameters []interface{},
+	callbacks []func(string, []interface{}, *Container),
+) {
+	for _, callback := range callbacks {
+		callback(abstract, parameters, container)
+	}
+}
+
+// Fire all the before resolving callbacks.
+func (container *Container) fireBeforeResolvingCallbacks(abstract string, parameters []interface{}) {
+	container.fireBeforeCallbackArray(abstract, parameters, container.globalBeforeResolvingCallbacks)
+
+	for index, callbacks := range container.beforeResolvingCallbacks {
+		// todo 可以做类似spring 的aop 操作
+		if index == abstract {
+			container.fireBeforeCallbackArray(abstract, parameters, callbacks)
+		}
+	}
+}
+
+// BeforeResolving Register a new before resolving callback for all types.
+func (container *Container) BeforeResolving(abstract interface{}, callback func(string, []interface{}, *Container)) {
+	if abstract == nil {
+		container.globalBeforeResolvingCallbacks = append(container.globalBeforeResolvingCallbacks, callback)
+		return
+	}
+	index := container.GetAlias(abstract)
+
+	if _, ok := container.beforeResolvingCallbacks[index]; !ok {
+		container.beforeResolvingCallbacks[index] = []func(string, []interface{}, *Container){}
+	}
+	container.beforeResolvingCallbacks[index] = append(container.beforeResolvingCallbacks[index], callback)
 }

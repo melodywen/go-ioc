@@ -2,6 +2,7 @@ package container
 
 import (
 	"cjw.com/melodywen/go-ioc/mock"
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -173,6 +174,61 @@ func TestContainer_Extend(t *testing.T) {
 				})
 				result := container.Make(mock.Animal{})
 				if !reflect.DeepEqual(result, []interface{}{4, 5, 6}) {
+					t.Errorf("解析实例有误")
+				}
+			}
+		})
+	}
+}
+
+func TestContainer_BeforeResolving(t *testing.T) {
+	type fields struct {
+		flagName string
+		flagNum  int
+		want []string
+	}
+
+	tests := []struct {
+		fields fields
+	}{
+		{
+			fields: fields{
+				flagName: "第一个简单的回调函数",
+				flagNum:  0,
+				want: []string{
+					"全局before回调函数",
+					"全局before回调函数2",
+					"私下的回调before回调函数1",
+					"私下的回调before回调函数2",
+				},
+			},
+		},
+	}
+	container := newContainer()
+	for _, tt := range tests {
+		t.Run(tt.fields.flagName, func(t *testing.T) {
+			switch tt.fields.flagNum {
+			case 0:
+				got := []string{}
+				container.Bind(mock.Animal{},mock.NewAnimal,true)
+				container.BeforeResolving(nil, func(s string, i []interface{}, container *Container) {
+					got = append(got, "全局before回调函数")
+					fmt.Println(tt.fields.flagNum,got)
+				})
+				container.BeforeResolving(nil, func(s string, i []interface{}, container *Container) {
+					got = append(got, "全局before回调函数2")
+					fmt.Println(tt.fields.flagNum,got)
+				})
+				container.BeforeResolving(mock.Animal{}, func(s string, i []interface{}, container *Container) {
+					got = append(got, "私下的回调before回调函数1")
+					fmt.Println(tt.fields.flagNum,got)
+				})
+				container.BeforeResolving(mock.Animal{}, func(s string, i []interface{}, container *Container) {
+					got = append(got, "私下的回调before回调函数2")
+					fmt.Println(tt.fields.flagNum,got)
+				})
+				 container.MakeWithParams(mock.Animal{},[]interface{}{"tom",3,"cate"})
+				if !reflect.DeepEqual(tt.fields.want, got) {
 					t.Errorf("解析实例有误")
 				}
 			}

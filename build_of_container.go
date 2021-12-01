@@ -16,6 +16,14 @@ type BuildOfContainer struct {
 // todo:
 // golang 目前没有发现动态加载功能， 待实现的一个功能： 如果是是  concrete 是一个结构体，能否自动寻路找到他的实例化方法？
 func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{}) (object interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("build 发现异常")
+			fmt.Println("concrete:", reflect.TypeOf(concrete))
+			fmt.Println("parameters:", parameters)
+			panic(err)
+		}
+	}()
 	// 获取实现类的类型
 	concreteType := reflect.TypeOf(concrete)
 
