@@ -27,10 +27,10 @@ type StructOfContainer struct {
 	reboundCallbacks map[string][]func(container *Container, instance interface{})           // 重新绑定的回调函数
 
 	globalBeforeResolvingCallbacks []func(string, []interface{}, *Container) // 全局的回调函数-前置
-	globalResolvingCallbacks       []func(string, []interface{}, *Container) // 全局的回调函数-调用时候
-	globalAfterResolvingCallbacks  []func(string, []interface{}, *Container) // 全局的回调函数-后置
+	globalResolvingCallbacks       []func(interface{}, *Container)           // 全局的回调函数-调用时候
+	globalAfterResolvingCallbacks  []func(interface{}, *Container)           // 全局的回调函数-后置
 
 	beforeResolvingCallbacks map[string][]func(string, []interface{}, *Container) // 具体的接口回调事件——前置
-	resolvingCallbacks       map[string]func() interface{}                      // 全具体的接口回调事件——调用的时候
-	afterResolvingCallbacks  map[string]func() interface{}                      // 具体的接口回调事件——后置
+	resolvingCallbacks       map[string][]func(interface{}, *Container)           // 全具体的接口回调事件——调用的时候
+	afterResolvingCallbacks  map[string][]func(interface{}, *Container)           // 具体的接口回调事件——后置
 }

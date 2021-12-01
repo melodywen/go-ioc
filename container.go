@@ -18,12 +18,12 @@ func newContainer() *Container {
 			reboundCallbacks: map[string][]func(container *Container, instance interface{}){},
 
 			globalBeforeResolvingCallbacks: []func(string, []interface{}, *Container){},
-			globalResolvingCallbacks:       nil,
-			globalAfterResolvingCallbacks:  nil,
+			globalResolvingCallbacks:       []func(interface{}, *Container){},
+			globalAfterResolvingCallbacks:  []func(interface{}, *Container){},
 
 			beforeResolvingCallbacks: map[string][]func(string, []interface{}, *Container){},
-			resolvingCallbacks:       nil,
-			afterResolvingCallbacks:  nil,
+			resolvingCallbacks:       map[string][]func(interface{}, *Container){},
+			afterResolvingCallbacks:  map[string][]func(interface{}, *Container){},
 		},
 	}
 	return structOfContainer

@@ -60,10 +60,10 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 	if container.IsShared(abstract) && !needsContextualBuild {
 		container.instances[abstract] = object
 	}
-	// todo 回调函数
-	//if ($raiseEvents) {
-	//	$this->fireResolvingCallbacks($abstract, $object);
-	//}
+
+	if raiseEvents {
+		container.fireResolvingCallbacks(abstract, object)
+	}
 
 	container.resolved[abstract] = true
 	return object

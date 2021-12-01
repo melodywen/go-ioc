@@ -4,6 +4,7 @@ import (
 	"cjw.com/melodywen/go-ioc/mock"
 	"fmt"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -185,7 +186,7 @@ func TestContainer_BeforeResolving(t *testing.T) {
 	type fields struct {
 		flagName string
 		flagNum  int
-		want []string
+		want     []string
 	}
 
 	tests := []struct {
@@ -210,28 +211,160 @@ func TestContainer_BeforeResolving(t *testing.T) {
 			switch tt.fields.flagNum {
 			case 0:
 				got := []string{}
-				container.Bind(mock.Animal{},mock.NewAnimal,true)
+				container.Bind(mock.Animal{}, mock.NewAnimal, true)
 				container.BeforeResolving(nil, func(s string, i []interface{}, container *Container) {
 					got = append(got, "全局before回调函数")
-					fmt.Println(tt.fields.flagNum,got)
+					fmt.Println(tt.fields.flagNum, got, s)
 				})
 				container.BeforeResolving(nil, func(s string, i []interface{}, container *Container) {
 					got = append(got, "全局before回调函数2")
-					fmt.Println(tt.fields.flagNum,got)
+					fmt.Println(tt.fields.flagNum, got, s)
 				})
 				container.BeforeResolving(mock.Animal{}, func(s string, i []interface{}, container *Container) {
 					got = append(got, "私下的回调before回调函数1")
-					fmt.Println(tt.fields.flagNum,got)
+					fmt.Println(tt.fields.flagNum, got, s)
 				})
 				container.BeforeResolving(mock.Animal{}, func(s string, i []interface{}, container *Container) {
 					got = append(got, "私下的回调before回调函数2")
-					fmt.Println(tt.fields.flagNum,got)
+					fmt.Println(tt.fields.flagNum, got, s)
 				})
-				 container.MakeWithParams(mock.Animal{},[]interface{}{"tom",3,"cate"})
+				container.MakeWithParams(mock.Animal{}, []interface{}{"tom", 3, "cate"})
 				if !reflect.DeepEqual(tt.fields.want, got) {
 					t.Errorf("解析实例有误")
 				}
 			}
+		})
+	}
+}
+
+func TestContainer_Resolving(t *testing.T) {
+	type fields struct {
+		flagName string
+		flagNum  int
+		want     []string
+	}
+
+	tests := []struct {
+		fields fields
+	}{
+		{
+			fields: fields{
+				flagName: "绑定一个-resolve",
+				flagNum:  0,
+				want: []string{
+					"0-global-resolve-callback-01", "0-global-resolve-callback-02",
+					"0-local-resolve-callback-01", "0-local-resolve-callback-02",
+				},
+			},
+		}, {
+			fields: fields{
+				flagName: "绑定其他的-resolve",
+				flagNum:  1,
+				want: []string{
+					"1-global-resolve-callback-01", "1-global-resolve-callback-02", "1-global-resolve-callback-11",
+					"1-global-resolve-callback-12", "1-local-resolve-callback-11", "1-local-resolve-callback-11",
+				},
+			},
+		},
+		{
+			fields: fields{
+				flagName: "绑定一个-after-resolve",
+				flagNum:  2,
+				want: []string{
+					"2-global-resolve-callback-01", "2-global-resolve-callback-02", "2-global-resolve-callback-11",
+					"2-global-resolve-callback-12", "2-local-resolve-callback-01", "2-local-resolve-callback-02",
+					"2-global-after-resolve-callback-21", "2-global-after-resolve-callback-22",
+					"2-local-after-resolve-callback-21", "2-local-after-resolve-callback-22",
+				},
+			},
+		},
+	}
+	container := newContainer()
+	got := []string{}
+	for _, tt := range tests {
+		t.Run(tt.fields.flagName, func(t *testing.T) {
+			switch tt.fields.flagNum {
+			case 0:
+				container.Bind(mock.Animal{}, func() *mock.Animal {
+					return mock.NewAnimal("cat", 12, "cate")
+				}, true)
+				container.Resolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-resolve-callback-01")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.Resolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-resolve-callback-02")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+
+				container.Resolving(mock.Animal{}, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-resolve-callback-01")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.Resolving(mock.Animal{}, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-resolve-callback-02")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.MakeWithParams(mock.Animal{}, []interface{}{})
+				container.MakeWithParams(mock.Animal{}, []interface{}{})
+				//container.MakeWithParams(mock.Animal{},[]interface{}{})
+				if !reflect.DeepEqual(tt.fields.want, got) {
+					fmt.Println(tt.fields.want, got)
+					t.Errorf("解析实例有误")
+				}
+			case 1:
+				container.Bind(mock.NewAnimalAndParam, func() *mock.Animal {
+					return mock.NewAnimal("cat", 12, "cate")
+				}, false)
+				container.Resolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-resolve-callback-11")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.Resolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-resolve-callback-12")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.Resolving(mock.NewAnimalAndParam, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-resolve-callback-11")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.Resolving(mock.NewAnimalAndParam, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-resolve-callback-11")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.MakeWithParams(mock.NewAnimalAndParam, []interface{}{})
+				if !reflect.DeepEqual(tt.fields.want, got) {
+					fmt.Println(tt.fields.want, got)
+					t.Errorf("解析实例有误")
+				}
+			case 2:
+				container.Bind(mock.Animal{}, func() *mock.Animal {
+					return mock.NewAnimal("cat", 12, "cate")
+				}, false)
+				got = []string{}
+				container.AfterResolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-after-resolve-callback-21")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.AfterResolving(nil, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-global-after-resolve-callback-22")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.AfterResolving(mock.Animal{}, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-after-resolve-callback-21")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.AfterResolving(mock.Animal{}, func(object interface{}, container *Container) {
+					got = append(got, strconv.Itoa(tt.fields.flagNum)+"-local-after-resolve-callback-22")
+					fmt.Println(tt.fields.flagNum, got, object)
+				})
+				container.MakeWithParams(mock.Animal{}, []interface{}{})
+				if !reflect.DeepEqual(tt.fields.want, got) {
+					fmt.Println(tt.fields.want, got)
+					t.Errorf("解析实例有误")
+				}
+			}
+			got = []string{}
 		})
 	}
 }

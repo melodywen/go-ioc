@@ -78,8 +78,7 @@ func (container *Container) getClosure(abstract string, concrete string) func() 
 func (container *Container) fireBeforeCallbackArray(
 	abstract string,
 	parameters []interface{},
-	callbacks []func(string, []interface{}, *Container),
-) {
+	callbacks []func(string, []interface{}, *Container)) {
 	for _, callback := range callbacks {
 		callback(abstract, parameters, container)
 	}
@@ -109,4 +108,69 @@ func (container *Container) BeforeResolving(abstract interface{}, callback func(
 		container.beforeResolvingCallbacks[index] = []func(string, []interface{}, *Container){}
 	}
 	container.beforeResolvingCallbacks[index] = append(container.beforeResolvingCallbacks[index], callback)
+}
+
+// Fire an array of callbacks with an object.
+func (container *Container) fireCallbackArray(object interface{}, callbacks []func(interface{}, *Container)) {
+	for _, callback := range callbacks {
+		callback(object, container)
+	}
+}
+
+// Get all callbacks for a given type.
+func (container *Container) getCallbacksForType(abstract string, object interface{}, callbacks map[string][]func(interface{}, *Container)) []func(interface{}, *Container) {
+	var results []func(interface{}, *Container)
+	for index, callback := range callbacks {
+		// todo 可以做类似spring 的aop 操作
+		if index == abstract {
+			results = append(results, callback...)
+		}
+	}
+	return results
+}
+
+// Resolving Register a new resolving callback.
+func (container *Container) Resolving(abstract interface{}, callback func(interface{}, *Container)) {
+	if abstract == nil {
+		container.globalResolvingCallbacks = append(container.globalResolvingCallbacks, callback)
+		return
+	}
+	index := container.GetAlias(abstract)
+	if _, ok := container.resolvingCallbacks[index]; !ok {
+		container.resolvingCallbacks[index] = []func(interface{}, *Container){}
+	}
+	container.resolvingCallbacks[index] = append(container.resolvingCallbacks[index], callback)
+}
+
+// AfterResolving Register a new after resolving callback for all types.
+func (container *Container) AfterResolving(abstract interface{}, callback func(interface{}, *Container)) {
+	if abstract == nil {
+		container.globalAfterResolvingCallbacks = append(container.globalAfterResolvingCallbacks, callback)
+		return
+	}
+	index := container.GetAlias(abstract)
+	if _, ok := container.afterResolvingCallbacks[index]; !ok {
+		container.afterResolvingCallbacks[index] = []func(interface{}, *Container){}
+	}
+	container.afterResolvingCallbacks[index] = append(container.afterResolvingCallbacks[index], callback)
+}
+
+// Fire all the resolving callbacks.
+func (container *Container) fireResolvingCallbacks(abstract string, object interface{}) {
+	container.fireCallbackArray(object, container.globalResolvingCallbacks)
+
+	container.fireCallbackArray(
+		object,
+		container.getCallbacksForType(abstract, object, container.resolvingCallbacks),
+	)
+	container.fireAfterResolvingCallbacks(abstract, object)
+}
+
+// Fire all the resolving callbacks.
+func (container *Container) fireAfterResolvingCallbacks(abstract string, object interface{}) {
+	container.fireCallbackArray(object, container.globalAfterResolvingCallbacks)
+	container.fireCallbackArray(
+		object,
+		container.getCallbacksForType(abstract, object, container.afterResolvingCallbacks),
+	)
 }
