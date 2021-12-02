@@ -33,4 +33,7 @@ type StructOfContainer struct {
 	beforeResolvingCallbacks map[string][]func(string, []interface{}, *Container) // 具体的接口回调事件——前置
 	resolvingCallbacks       map[string][]func(interface{}, *Container)           // 全具体的接口回调事件——调用的时候
 	afterResolvingCallbacks  map[string][]func(interface{}, *Container)           // 具体的接口回调事件——后置
+
+	// contextual
+	contextual map[string]map[string]interface{}	// 存放上下文内容
 }

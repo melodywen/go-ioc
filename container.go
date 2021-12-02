@@ -24,6 +24,8 @@ func newContainer() *Container {
 			beforeResolvingCallbacks: map[string][]func(string, []interface{}, *Container){},
 			resolvingCallbacks:       map[string][]func(interface{}, *Container){},
 			afterResolvingCallbacks:  map[string][]func(interface{}, *Container){},
+
+			contextual: map[string]map[string]interface{}{},
 		},
 	}
 	return structOfContainer
