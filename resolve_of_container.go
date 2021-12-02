@@ -1,19 +1,32 @@
 package container
 
+import (
+	"runtime"
+)
+
 // MakeWithParams 对外暴露make 方法并且携带参数
 func (container *Container) MakeWithParams(abstract interface{}, parameters []interface{}) interface{} {
 	index := container.AbstractToString(abstract)
-	return container.resolve(index, parameters, true)
+	return container.makeWithBuildStack(index, parameters, nil)
 }
 
 // Make 对外暴露make 方法
 func (container *Container) Make(abstract interface{}) interface{} {
 	index := container.AbstractToString(abstract)
-	return container.resolve(index, []interface{}{}, true)
+	return container.makeWithBuildStack(index, []interface{}{}, nil)
+}
+
+func (container *Container) makeWithBuildStack(abstract string, parameters []interface{}, buildStack []string) interface{} {
+	index := container.AbstractToString(abstract)
+	if buildStack == nil {
+		pc, _, _, _ := runtime.Caller(2)
+		buildStack = []string{runtime.FuncForPC(pc).Name()}
+	}
+	return container.resolve(index, parameters, true, buildStack)
 }
 
 // resolve 进行解析
-func (container *Container) resolve(abstract string, parameters []interface{}, raiseEvents bool) (object interface{}) {
+func (container *Container) resolve(abstract string, parameters []interface{}, raiseEvents bool, buildStack []string) (object interface{}) {
 	abstract = container.GetAlias(abstract)
 
 	// First we'll fire any event handlers which handle the "before" resolving of
@@ -42,9 +55,9 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 	// the binding. This will instantiate the types, as well as resolve any of
 	// its "nested" dependencies recursively until all have gotten resolved.
 	if container.isBuildable(abstract, concrete) {
-		object = container.Build(concrete, parameters)
+		object = container.Build(concrete, parameters, buildStack)
 	} else {
-		object = container.MakeWithParams(concrete, parameters)
+		object = container.makeWithBuildStack(container.AbstractToString(concrete), parameters, buildStack)
 	}
 
 	// If we defined any extenders for this type, we'll need to spin through them

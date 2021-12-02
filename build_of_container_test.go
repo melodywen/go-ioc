@@ -80,7 +80,7 @@ func TestBuildOfContainer_Build(t *testing.T) {
 			bu := &BuildOfContainer{}
 			//gotObject := bu.Build(tt.args.concrete, tt.args.parameters)
 			//fmt.Println(gotObject,reflect.TypeOf(gotObject))
-			if gotObject := bu.Build(tt.args.concrete, tt.args.parameters); !reflect.DeepEqual(gotObject, tt.wantObject) {
+			if gotObject := bu.Build(tt.args.concrete, tt.args.parameters, []string{}); !reflect.DeepEqual(gotObject, tt.wantObject) {
 				t.Errorf("Build() = %v, want %v", gotObject, tt.wantObject)
 			}
 		})
