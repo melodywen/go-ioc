@@ -77,7 +77,7 @@ func TestBuildOfContainer_Build(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			bu := &BuildOfContainer{}
+			bu := NewContainer()
 			//gotObject := bu.Build(tt.args.concrete, tt.args.parameters)
 			//fmt.Println(gotObject,reflect.TypeOf(gotObject))
 			if gotObject := bu.Build(tt.args.concrete, tt.args.parameters, []string{}); !reflect.DeepEqual(gotObject, tt.wantObject) {
@@ -122,7 +122,7 @@ func TestBuildOfContainer_isBuildable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			bu := &BuildOfContainer{}
+			bu := NewContainer()
 			if got := bu.isBuildable(tt.args.abstract, tt.args.concrete); got != tt.want {
 				t.Errorf("isBuildable() = %v, want %v", got, tt.want)
 			}

@@ -45,7 +45,7 @@ func TestContainer_getConcrete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.Bind(tt.fields.abstract, tt.fields.concrete, tt.fields.shared)
 			gotConcrete := container.getConcrete(tt.args.abstract)
 
@@ -123,7 +123,7 @@ func TestContainer_IsShared(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			if tt.fields.instance != nil {
 				container.Instance(tt.fields.abstract, tt.fields.instance)
 			} else {
@@ -230,7 +230,7 @@ func TestContainer_MakeWithParams(t *testing.T) {
 			want: []interface{}{mock.NewAnimal("dog", 2, "cate"), "dog", 2, "cate"},
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.fields.abstract != nil {
@@ -275,7 +275,7 @@ func TestContainer_makeWithBuildStack(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.Bind(tt.args.abstract,tt.args.concrete,tt.args.shared)
 			got := container.MakeWithParams(tt.args.abstract, tt.args.parameters);
 			fmt.Println(got)

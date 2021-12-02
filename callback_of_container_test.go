@@ -35,7 +35,7 @@ func TestContainer_Rebinding(t *testing.T) {
 			},
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	for _, tt := range tests {
 		t.Run(tt.fields.flagName, func(t *testing.T) {
 			switch tt.fields.flagNum {
@@ -115,7 +115,7 @@ func TestContainer_Extend(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.fields.flagName, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 
 			switch tt.fields.flagNum {
 			case 0:
@@ -205,7 +205,7 @@ func TestContainer_BeforeResolving(t *testing.T) {
 			},
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	for _, tt := range tests {
 		t.Run(tt.fields.flagName, func(t *testing.T) {
 			switch tt.fields.flagNum {
@@ -279,7 +279,7 @@ func TestContainer_Resolving(t *testing.T) {
 			},
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	got := []string{}
 	for _, tt := range tests {
 		t.Run(tt.fields.flagName, func(t *testing.T) {

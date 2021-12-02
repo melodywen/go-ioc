@@ -10,10 +10,9 @@ import (
 func TestContainer_When(t *testing.T) {
 	type fields struct {
 		StructOfContainer StructOfContainer
-		BuildOfContainer  BuildOfContainer
 		ExtendOfContainer ExtendOfContainer
 	}
-	container := newContainer()
+	container := NewContainer()
 	type args struct {
 		concrete interface{}
 	}
@@ -72,7 +71,7 @@ func TestContainer_AddContextualBinding(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.AddContextualBinding(tt.args.concrete, tt.args.abstract, tt.args.implementation)
 
 			fmt.Println(container.contextual)

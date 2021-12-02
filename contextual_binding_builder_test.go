@@ -49,7 +49,7 @@ func TestContextualBindingBuilder_Give(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.When(tt.args.concrete).Need(tt.args.abstract).Give(tt.args.implementation)
 			if !reflect.DeepEqual(container.contextual,tt.fields.StructOfContainer.contextual) {
 				t.Errorf("AddContextualBinding() = %v, want %v",container.StructOfContainer,tt.fields.StructOfContainer)

@@ -3,9 +3,16 @@ package container
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
-type BuildOfContainer struct {
+func (container *Container)  isConstructMethod(concrete interface{}) bool {
+	index := strings.Split(container.AbstractToString(concrete), ".")
+	methodName := index[len(index)-1]
+	if strings.HasPrefix(methodName, "New") {
+		return true
+	}
+	return false
 }
 
 // Build 动态构建一个实例出来：
@@ -15,7 +22,7 @@ type BuildOfContainer struct {
 // 4. 如果是一个结构体，则直接寻找他对应的实例化方法
 // todo:
 // golang 目前没有发现动态加载功能， 待实现的一个功能： 如果是是  concrete 是一个结构体，能否自动寻路找到他的实例化方法？
-func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{}, buildStack []string) (object interface{}) {
+func (container *Container) Build(concrete interface{}, parameters []interface{}, buildStack []string) (object interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("build 发现异常")
@@ -33,6 +40,13 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{},
 		fmt.Println("this concrete is :", concrete)
 		panic("Target [xxx] is not instantiable. please see upper logger")
 	}
+
+	// 是否是构造函数压入栈
+	isConstructMethod := container.isConstructMethod(concrete)
+	if isConstructMethod {
+		buildStack = append(buildStack, container.AbstractToString(concrete))
+	}
+
 	// 获取实现类的值
 	concreteValue := reflect.ValueOf(concrete)
 	// 函数的形参绑定
@@ -62,7 +76,9 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{},
 			response = append(response, returnNew.Interface()) //返回
 		}
 	}
-	fmt.Println(buildStack)
+	if isConstructMethod {
+		buildStack = buildStack[:len(buildStack)-1]
+	}
 
 	if len(response) == 1 {
 		return response[0]
@@ -74,7 +90,7 @@ func (_ *BuildOfContainer) Build(concrete interface{}, parameters []interface{},
 // 1. 如果是自己等于自己则直接输出
 // 2. 如果是回调函数则保留
 // 3. 如果是其他的类型，说明还不够，需要进行递归获取
-func (_ *BuildOfContainer) isBuildable(abstract interface{}, concrete interface{}) bool {
+func (container *Container) isBuildable(abstract interface{}, concrete interface{}) bool {
 
 	if reflect.DeepEqual(abstract, concrete) {
 		return true

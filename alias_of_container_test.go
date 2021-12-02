@@ -115,7 +115,7 @@ func TestContainer_Alias(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.Alias(tt.args.abstract, tt.args.alias)
 			if !reflect.DeepEqual(tt.fields.StructOfContainer.aliases, container.aliases) ||
 				!reflect.DeepEqual(tt.fields.StructOfContainer.abstractAliases, container.abstractAliases) {
@@ -166,7 +166,7 @@ func TestContainer_removeAbstractAlias(t *testing.T) {
 			wantOk: false,
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, field := range tt.fields {

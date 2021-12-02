@@ -2,11 +2,10 @@ package container
 
 type Container struct {
 	StructOfContainer
-	BuildOfContainer
 	ExtendOfContainer
 }
 
-func newContainer() *Container {
+func NewContainer() *Container {
 	structOfContainer := &Container{
 		StructOfContainer: StructOfContainer{
 			resolved:         map[string]bool{},

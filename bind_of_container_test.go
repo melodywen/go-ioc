@@ -133,7 +133,7 @@ func TestContainer_Bound(t *testing.T) {
 			name: "测试",
 		},
 	}
-	container := newContainer()
+	container := NewContainer()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			container.Bind(mock.Animal{}, mock.NewAnimal, false)
@@ -177,7 +177,7 @@ func TestContainer_Instance(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			container := newContainer()
+			container := NewContainer()
 			container.Bind(mock.Animal{}, func() *mock.Animal {
 				return mock.NewAnimal("dog", 12, "cat")
 			}, true)
