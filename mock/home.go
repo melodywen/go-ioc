@@ -1,5 +1,11 @@
 package mock
 
+type WorkInterface interface {
+	// 请告知名称
+	sayWorkName()
+}
+
+
 type Work struct {
 	workName string
 	money    int
@@ -40,13 +46,28 @@ type Mother struct {
 	homework   Homework
 }
 
+func NewMother(motherName string, age int, homework Homework) *Mother {
+	return &Mother{motherName: motherName, age: age, homework: homework}
+}
+
+
 type Child struct {
 	childName string
 	age       int
 }
 
-type Family struct {
-	father   Father
-	mother   Mother
-	children []Child
+func NewChild(childName string, age int) *Child {
+	return &Child{childName: childName, age: age}
 }
+
+type Family struct {
+	familyName string
+	father   Father
+	children []Child
+	mother   Mother
+}
+
+func NewFamily(familyName string, father Father, children []Child, mother Mother) *Family {
+	return &Family{familyName: familyName, father: father, children: children, mother: mother}
+}
+

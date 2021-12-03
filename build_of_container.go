@@ -23,11 +23,15 @@ func (container *Container) isConstructMethod(concrete interface{}) bool {
 // todo:
 // golang 目前没有发现动态加载功能， 待实现的一个功能： 如果是是  concrete 是一个结构体，能否自动寻路找到他的实例化方法？
 func (container *Container) Build(concrete interface{}, parameters []interface{}, buildStack []string) (object interface{}) {
+	// 函数的形参绑定
+	var params []reflect.Value
+
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("build 发现异常")
 			fmt.Println("concrete:", reflect.TypeOf(concrete))
-			fmt.Println("parameters:", parameters)
+			fmt.Println("origin-parameters:", parameters)
+			fmt.Println("autoload-parameters:", params)
 			panic(err)
 		}
 	}()
@@ -47,8 +51,6 @@ func (container *Container) Build(concrete interface{}, parameters []interface{}
 		buildStack = append(buildStack, container.AbstractToString(concrete))
 	}
 
-	// 函数的形参绑定
-	var params []reflect.Value
 	for _, parameter := range parameters {
 		params = append(params, reflect.ValueOf(parameter))
 	}
