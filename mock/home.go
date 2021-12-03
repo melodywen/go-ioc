@@ -23,9 +23,17 @@ type Father struct {
 	work       *Work
 }
 
-func NewFather(fatherName string, age int, work *Work) *Father {
+func NewFatherWithAllParam(work *Work, fatherName string, age int) *Father {
 	return &Father{fatherName: fatherName, age: age, work: work}
 }
+
+func NewFatherWithPre(work *Work) *Father {
+	return &Father{fatherName: "张三", age: 33, work: work}
+}
+func NewFatherWithStruct(work Work) *Father {
+	return &Father{fatherName: "张三", age: 33, work: &work}
+}
+
 type Mother struct {
 	motherName string
 	age        int

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (container *Container)  isConstructMethod(concrete interface{}) bool {
+func (container *Container) isConstructMethod(concrete interface{}) bool {
 	index := strings.Split(container.AbstractToString(concrete), ".")
 	methodName := index[len(index)-1]
 	if strings.HasPrefix(methodName, "New") {
@@ -47,13 +47,15 @@ func (container *Container) Build(concrete interface{}, parameters []interface{}
 		buildStack = append(buildStack, container.AbstractToString(concrete))
 	}
 
-	// 获取实现类的值
-	concreteValue := reflect.ValueOf(concrete)
 	// 函数的形参绑定
 	var params []reflect.Value
 	for _, parameter := range parameters {
 		params = append(params, reflect.ValueOf(parameter))
 	}
+	params = container.getParameters(params, concrete, buildStack)
+
+	// 获取实现类的值
+	concreteValue := reflect.ValueOf(concrete)
 	// 调用函数
 	resultList := concreteValue.Call(params)
 	// 然后进行克隆反射
