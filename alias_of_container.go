@@ -16,7 +16,7 @@ func (container *Container) GetAlias(abstract interface{}) string {
 	return index
 }
 
-// Alias 设置别名
+// Alias a type to a different name.
 func (container *Container) Alias(abstract interface{}, alias interface{}) {
 	abstractStr := container.AbstractToString(abstract)
 	aliasStr := container.AbstractToString(alias)

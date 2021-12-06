@@ -192,3 +192,94 @@ func TestContainer_Instance(t *testing.T) {
 		})
 	}
 }
+
+func TestContainer_BindIf(t *testing.T) {
+
+	type args struct {
+		abstract interface{}
+		concrete interface{}
+		shared   bool
+		params   []interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want interface{}
+	}{
+		{
+			name: "第一次绑定",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: mock.NewAnimal,
+				shared:   true,
+				params:   []interface{}{"dog", 12, "cate-dog"},
+			},
+			want: mock.NewAnimal("dog", 12, "cate-dog"),
+		}, {
+			name: "第二次绑定",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: mock.NewChild,
+				shared:   false,
+				params:   []interface{}{"dog", 12, "cate-dog"},
+			},
+			want: mock.NewAnimal("dog", 12, "cate-dog"),
+		},
+	}
+	container := NewContainer()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container.BindIf(tt.args.abstract, tt.args.concrete, tt.args.shared)
+			got := container.MakeWithParams(tt.args.abstract, tt.args.params)
+			fmt.Println(got)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Instance() = %v, want %v", container.StructOfContainer, tt.want)
+			}
+		})
+	}
+}
+
+func TestContainer_SingletonIf(t *testing.T) {
+	type args struct {
+		abstract interface{}
+		concrete interface{}
+		shared   bool
+		params   []interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want interface{}
+	}{
+		{
+			name: "第一次绑定",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: mock.NewAnimal,
+				shared:   true,
+				params:   []interface{}{"dog", 12, "cate-dog"},
+			},
+			want: mock.NewAnimal("dog", 12, "cate-dog"),
+		}, {
+			name: "第二次绑定",
+			args: args{
+				abstract: mock.Animal{},
+				concrete: mock.NewChild,
+				shared:   false,
+				params:   []interface{}{"dog", 12, "cate-dog"},
+			},
+			want: mock.NewAnimal("dog", 12, "cate-dog"),
+		},
+	}
+	container := NewContainer()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container.SingletonIf(tt.args.abstract, tt.args.concrete)
+			got := container.MakeWithParams(tt.args.abstract, tt.args.params)
+			fmt.Println(got)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Instance() = %v, want %v", container.StructOfContainer, tt.want)
+			}
+		})
+	}
+}

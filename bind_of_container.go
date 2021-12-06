@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// Bind 绑定接口
+// Bind Register a binding with the container.
 func (container *Container) Bind(abstract interface{}, concrete interface{}, shared bool) {
 	// 获取对应的 map key
 	index := container.AbstractToString(abstract)
@@ -38,6 +38,13 @@ func (container *Container) Bind(abstract interface{}, concrete interface{}, sha
 	}
 }
 
+// BindIf Register a binding if it hasn't already been registered.
+func (container *Container) BindIf(abstract interface{}, concrete interface{}, shared bool) {
+	if !container.Bound(abstract) {
+		container.Bind(abstract, concrete, shared)
+	}
+}
+
 // dropStaleInstances
 // 移除已经缓存的实例 和别名
 func (container *Container) dropStaleInstances(abstract string) (ok bool) {
@@ -52,7 +59,7 @@ func (container *Container) dropStaleInstances(abstract string) (ok bool) {
 	return ok
 }
 
-// Resolved 是否已经实例化过
+// Resolved Determine if the given abstract type has been resolved.
 func (container *Container) Resolved(abstract interface{}) (ok bool) {
 	if container.IsAlias(abstract) {
 		abstract = container.GetAlias(abstract)
@@ -102,4 +109,26 @@ func (container *Container) Instance(abstract interface{}, instance interface{})
 		container.rebound(index)
 	}
 	return instance
+}
+
+// Singleton Register a binding if it hasn't already been registered.
+func (container *Container) Singleton(abstract interface{}, concrete interface{}) {
+	container.Bind(abstract, concrete, true)
+}
+
+// SingletonIf Register a shared binding if it hasn't already been registered.
+func (container *Container) SingletonIf(abstract interface{}, concrete interface{}) {
+	if !container.Bound(abstract) {
+		container.Singleton(abstract, concrete)
+	}
+}
+
+// Flush the container of all bindings and resolved instances.
+func (container *Container) Flush() {
+	container.aliases = map[string]string{}
+	container.resolved = map[string]bool{}
+	container.bindings = map[string]Bind{}
+	container.instances = map[string]interface{}{}
+	container.abstractAliases = map[string][]string{}
+	//container.scopedInstances = [];
 }

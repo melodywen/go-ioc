@@ -4,13 +4,21 @@ import (
 	"runtime"
 )
 
-// MakeWithParams 对外暴露make 方法并且携带参数
+// Factory Get a closure to resolve the given type from the container.
+func (container *Container) Factory(abstract interface{}) func() interface{} {
+	return func() interface{} {
+		index := container.AbstractToString(abstract)
+		return container.makeWithBuildStack(index, []interface{}{}, nil)
+	}
+}
+
+// MakeWithParams Resolve the given type from the container with parameters.
 func (container *Container) MakeWithParams(abstract interface{}, parameters []interface{}) interface{} {
 	index := container.AbstractToString(abstract)
 	return container.makeWithBuildStack(index, parameters, nil)
 }
 
-// Make 对外暴露make 方法
+// Make Resolve the given type from the container.
 func (container *Container) Make(abstract interface{}) interface{} {
 	index := container.AbstractToString(abstract)
 	return container.makeWithBuildStack(index, []interface{}{}, nil)

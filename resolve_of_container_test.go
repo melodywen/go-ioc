@@ -251,36 +251,63 @@ func TestContainer_MakeWithParams(t *testing.T) {
 func TestContainer_makeWithBuildStack(t *testing.T) {
 	type args struct {
 		abstract   interface{}
-		shared   bool
-		concrete interface{}
+		shared     bool
+		concrete   interface{}
 		parameters []interface{}
 		buildStack []string
 	}
 	tests := []struct {
-		name   string
-		args   args
-		want   interface{}
+		name string
+		args args
+		want interface{}
 	}{
 		{
-			name:"测试简单的stack 注册",
+			name: "测试简单的stack 注册",
 			args: args{
-				abstract: mock.Animal{},
-				shared: true,
-				concrete: mock.NewAnimal,
-				parameters: []interface{}{"cat",3,"cate"},
+				abstract:   mock.Animal{},
+				shared:     true,
+				concrete:   mock.NewAnimal,
+				parameters: []interface{}{"cat", 3, "cate"},
 				buildStack: nil,
 			},
-			want: mock.NewAnimal("cat",3,"cate"),
+			want: mock.NewAnimal("cat", 3, "cate"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			container := NewContainer()
-			container.Bind(tt.args.abstract,tt.args.concrete,tt.args.shared)
-			got := container.MakeWithParams(tt.args.abstract, tt.args.parameters);
+			container.Bind(tt.args.abstract, tt.args.concrete, tt.args.shared)
+			got := container.MakeWithParams(tt.args.abstract, tt.args.parameters)
 			fmt.Println(got)
-			if  !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("makeWithBuildStack() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestContainer_Factory(t *testing.T) {
+	type args struct {
+		abstract interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want interface{}
+	}{
+		{
+			name: "测试factory",
+			args: args{abstract: mock.Animal{}},
+			want: "tom",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container := NewContainer()
+			container.Bind(mock.Animal{}, func() string { return "tom" }, true)
+			got := container.Factory(tt.args.abstract)
+			if got() != tt.want {
+				t.Errorf("Factory() = %v, want %v", got(), tt.want)
 			}
 		})
 	}
