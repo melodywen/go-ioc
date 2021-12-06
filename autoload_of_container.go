@@ -56,6 +56,9 @@ func (container *Container) resolveDependencies(parameterType reflect.Type, buil
 		object = container.makeWithBuildStack(container.AbstractToString(pkgInfo), nil, buildStack)
 	} else if container.Bound(elemInfo) {
 		object = container.makeWithBuildStack(container.AbstractToString(elemInfo), nil, buildStack)
+	} else if pkgInfo == container.AbstractToString(BuildStackInContainer{}) {
+		// 如果是特殊是的字段————构建的堆栈信息
+		object = BuildStackInContainer{buildStack: buildStack}
 	} else {
 		panic("can not auto load param，because this interface is not registered,please connect admin:" + pkgInfo)
 	}

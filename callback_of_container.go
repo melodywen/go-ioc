@@ -65,15 +65,12 @@ func (container *Container) Extend(abstract interface{}, closure func(object int
 }
 
 //  Get the Closure to be used when building a type.
-func (container *Container) getClosure(abstract string, concrete string) func() interface{} {
-	return func() interface{} {
-		// todo :这里有bug stack 必须向下传递
-		var buildStack = []string{}
+func (container *Container) getClosure(abstract string, concrete string) func(container BuildStackInContainer) interface{} {
+	return func(buildStackInContainer BuildStackInContainer) interface{} {
+		var buildStack = buildStackInContainer.buildStack
 		if abstract == concrete {
 			return container.Build(concrete, []interface{}{}, buildStack)
 		}
-
-
 		return container.resolve(concrete, []interface{}{}, false, buildStack)
 	}
 }

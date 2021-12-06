@@ -1,8 +1,14 @@
 package container
 
+// Bind 绑定的结构体
 type Bind struct {
 	shared   bool
 	concrete interface{}
+}
+
+// BuildStackInContainer 当需要依赖输出build 过程中的堆栈信息
+type BuildStackInContainer struct {
+	buildStack []string
 }
 
 // StructOfContainer 容器的结构体
@@ -35,5 +41,5 @@ type StructOfContainer struct {
 	afterResolvingCallbacks  map[string][]func(interface{}, *Container)           // 具体的接口回调事件——后置
 
 	// contextual
-	contextual map[string]map[string]interface{}	// 存放上下文内容
+	contextual map[string]map[string]interface{} // 存放上下文内容
 }
