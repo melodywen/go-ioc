@@ -205,3 +205,87 @@ func TestNewFamily(t *testing.T) {
 		})
 	}
 }
+
+func TestNewHomework(t *testing.T) {
+	type args struct {
+		abstract interface{}
+		concrete interface{}
+		shared   bool
+		param    []interface{}
+	}
+	var workInterface *mock.WorkInterface
+
+	tests := []struct {
+		name string
+		args args
+		want interface{}
+	}{
+		{
+			name: "register-work-interface",
+			args: args{
+				abstract: workInterface,
+				concrete: func() interface{} { return nil },
+				shared:   false,
+				param:    []interface{}{},
+			},
+			want: nil,
+		}, {
+			name: "register-work",
+			args: args{
+				abstract: mock.Work{},
+				concrete: func() *mock.Work { return mock.NewWork("php工程师", 12) },
+				shared:   false,
+				param:    []interface{}{},
+			},
+			want: mock.NewWork("php工程师", 12),
+		},
+		{
+			name: "register-homeWork",
+			args: args{
+				abstract: mock.Homework{},
+				concrete: func() *mock.Homework { return mock.NewHomework("照顾家庭") },
+				shared:   false,
+				param:    []interface{}{},
+			},
+			want: mock.NewHomework("照顾家庭"),
+		},
+		{
+			name: "register-father",
+			args: args{
+				abstract: mock.Father{},
+				concrete: mock.NewFatherWithInterface,
+				shared:   false,
+				param:    []interface{}{"张三", 33},
+			},
+			want: mock.NewFatherWithAllParam(mock.NewWork("php工程师", 12), "张三", 33),
+		},
+		{
+			name: "register-mother",
+			args: args{
+				abstract: mock.Mother{},
+				concrete: mock.NewMotherWithInterface,
+				shared:   false,
+				param:    []interface{}{"赵丽", 18},
+			},
+			want: mock.NewMother("赵丽", 18, *mock.NewHomework("照顾家庭")),
+		},
+	}
+	app := NewContainer()
+	for index, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if index == 2 {
+				app.When(mock.NewFatherWithInterface).Need(workInterface).Give(func(work *mock.Work) *mock.Work {
+					return work
+				})
+				app.When(mock.NewMotherWithInterface).Need(workInterface).Give(func(work mock.Homework) mock.Homework {
+					return work
+				})
+			}
+			app.Bind(tt.args.abstract, tt.args.concrete, tt.args.shared)
+			got := app.MakeWithParams(tt.args.abstract, tt.args.param)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewWork() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

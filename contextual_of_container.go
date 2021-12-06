@@ -24,6 +24,35 @@ func (container *Container) AddContextualBinding(concrete interface{}, abstract 
 }
 
 // getContextualConcrete 获取上下文进行解析  ,// todo : 如果是需要上下文的绑定
-func (container *Container) getContextualConcrete(abstract string) (concrete interface{}) {
+func (container *Container) getContextualConcrete(abstract string, buildStack []string) (concrete interface{}) {
+	implementation := container.findInContextualBindings(abstract, buildStack)
+	if implementation != nil {
+		return implementation
+	}
+
+	// Next we need to see if a contextual binding might be bound under an alias of the
+	// given abstract type. So, we will need to check if any aliases exist with this
+	// type and then spin through them and check for contextual bindings on these.
+	if _, ok := container.abstractAliases[abstract]; !ok {
+		return nil
+	}
+	for _, alias := range container.abstractAliases[abstract] {
+		implementation := container.findInContextualBindings(alias, buildStack)
+		if implementation != nil {
+			return implementation
+		}
+	}
+	return nil
+}
+
+// Find the concrete binding for the given abstract in the contextual binding array.
+func (container *Container) findInContextualBindings(abstract string, buildStack []string) interface{} {
+	currentStack := buildStack[len(buildStack)-1]
+	if _, ok := container.contextual[currentStack]; !ok {
+		return nil
+	}
+	if implementation, ok := container.contextual[currentStack][abstract]; ok {
+		return implementation
+	}
 	return nil
 }

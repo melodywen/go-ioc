@@ -36,7 +36,7 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 		container.fireBeforeResolvingCallbacks(abstract, parameters)
 	}
 
-	concrete := container.getContextualConcrete(abstract)
+	concrete := container.getContextualConcrete(abstract, buildStack)
 
 	needsContextualBuild := len(parameters) != 0 || concrete != nil
 

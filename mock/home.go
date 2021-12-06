@@ -1,8 +1,7 @@
 package mock
 
 type WorkInterface interface {
-	// 请告知名称
-	sayWorkName()
+
 }
 
 
@@ -11,12 +10,19 @@ type Work struct {
 	money    int
 }
 
+func (work *Work)sayWorkName() string {
+	return work.workName
+}
+
 func NewWork(workName string, money int) *Work {
 	return &Work{workName: workName, money: money}
 }
 
 type Homework struct {
 	workName string
+}
+func (homework *Homework)sayWorkName() string {
+	return homework.workName
 }
 
 func NewHomework(workName string) *Homework {
@@ -40,6 +46,10 @@ func NewFatherWithStruct(work Work) *Father {
 	return &Father{fatherName: "张三", age: 33, work: &work}
 }
 
+func NewFatherWithInterface(work WorkInterface,fatherName string, age int) *Father {
+	return &Father{fatherName: "张三", age: 33, work: work.(*Work)}
+}
+
 type Mother struct {
 	motherName string
 	age        int
@@ -48,6 +58,9 @@ type Mother struct {
 
 func NewMother(motherName string, age int, homework Homework) *Mother {
 	return &Mother{motherName: motherName, age: age, homework: homework}
+}
+func NewMotherWithInterface(motherName string, age int, work WorkInterface) *Mother {
+	return &Mother{motherName: motherName, age: age, homework: work.(Homework)}
 }
 
 

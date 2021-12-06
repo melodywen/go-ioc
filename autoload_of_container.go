@@ -1,6 +1,8 @@
 package container
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // check concert parameters and fill
 func (container *Container) getParameters(currentParams []reflect.Value, concrete interface{}, buildStack []string) []reflect.Value {
@@ -39,6 +41,8 @@ func (container *Container) resolveDependencies(parameterType reflect.Type, buil
 	//	fallthrough
 	//case reflect.Func:
 	//	panic("can not auto load param,because param type can not suppose ,please connect admin:" + parameterType.Kind().String())
+	case reflect.Interface:
+		pkgInfo = "*" + parameterType.PkgPath() + "." + parameterType.Name()
 	case reflect.Struct:
 		pkgInfo = parameterType.PkgPath() + "." + parameterType.Name()
 	case reflect.Ptr:
@@ -50,11 +54,10 @@ func (container *Container) resolveDependencies(parameterType reflect.Type, buil
 	var object interface{}
 	if container.Bound(pkgInfo) {
 		object = container.makeWithBuildStack(container.AbstractToString(pkgInfo), nil, buildStack)
-
 	} else if container.Bound(elemInfo) {
 		object = container.makeWithBuildStack(container.AbstractToString(elemInfo), nil, buildStack)
 	} else {
-		panic("can not auto load param，because this interface is not registered,please connect admin")
+		panic("can not auto load param，because this interface is not registered,please connect admin:" + pkgInfo)
 	}
 	// if need struct param ，but object is pre,so to transform data type
 	if parameterType.Kind() == reflect.Struct && reflect.TypeOf(object).Kind() == reflect.Ptr {
@@ -62,4 +65,3 @@ func (container *Container) resolveDependencies(parameterType reflect.Type, buil
 	}
 	return reflect.ValueOf(object)
 }
-
