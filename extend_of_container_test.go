@@ -34,7 +34,7 @@ func TestCommonOfContainer_AbstractToString(t *testing.T) {
 			name: "测试指针类型",
 			args: args{abstract: mock.NewAnimal},
 			want: "cjw.com/melodywen/go-ioc/mock.NewAnimal",
-		},{
+		}, {
 			name: "测试指针类型-对象方法",
 			args: args{abstract: (&mock.Animal{}).Say},
 			want: "cjw.com/melodywen/go-ioc/mock.(*Animal).Say-fm",

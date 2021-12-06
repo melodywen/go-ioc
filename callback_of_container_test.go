@@ -122,7 +122,6 @@ func TestContainer_Extend(t *testing.T) {
 				container.Bind(mock.Animal{}, func() (int, int, int) {
 					return mock.AddAndParam(3, 5)
 				}, false)
-				result := container.MakeWithParams(mock.Animal{}, []interface{}{})
 				container.Extend(mock.Animal{}, func(object interface{}, container *Container) interface{} {
 					if !reflect.DeepEqual(object, []interface{}{8, 3, 5}) {
 						t.Errorf("第一层有问题")
@@ -133,7 +132,7 @@ func TestContainer_Extend(t *testing.T) {
 					}
 					return response
 				})
-				result = container.MakeWithParams(mock.Animal{}, []interface{}{})
+				result := container.MakeWithParams(mock.Animal{}, []interface{}{})
 				if !reflect.DeepEqual(result, []interface{}{11, 6, 8}) {
 					t.Errorf("第一层有问题555")
 				}

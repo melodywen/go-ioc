@@ -2,6 +2,7 @@ package contracts
 
 import container "cjw.com/melodywen/go-ioc"
 
+// ContainerContract container interface
 type ContainerContract interface {
 	//AbstractToString 通过 abstract 进行 字符串得到 作为map key
 	AbstractToString(abstract interface{}) string
@@ -32,7 +33,7 @@ type ContainerContract interface {
 	// Make Resolve the given type from the container.
 	Make(abstract interface{}) interface{}
 	// Resolved Determine if the given abstract type has been resolved.
-	Resolved(abstract interface{})  bool
+	Resolved(abstract interface{}) bool
 	// Resolving Register a new resolving callback.
 	Resolving(abstract interface{}, callback func(interface{}, *container.Container))
 	// AfterResolving Register a new after resolving callback for all types.

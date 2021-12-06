@@ -1,10 +1,12 @@
 package container
 
+// Container  main of struct
 type Container struct {
 	StructOfContainer
 	ExtendOfContainer
 }
 
+// NewContainer container construct
 func NewContainer() *Container {
 	structOfContainer := &Container{
 		StructOfContainer: StructOfContainer{
