@@ -44,8 +44,8 @@ container.MakeWithParams(mock.Animal{}, []interface{}{"dog", 12, "cate-pet"})
 
 // Bind a callback method
 container.Bind(mock.Animal{}, func() *mock.Animal {
-        return mock.NewAnimal("dog", 12, "cate-pet")
-    }, true)
+    return mock.NewAnimal("dog", 12, "cate-pet")
+}, true)
 // resolve
 container.Make(mock.Animal{})
 
@@ -59,6 +59,45 @@ container.Singleton(mock.Animal{}, func() *mock.Animal {
 ### 4. Binding instance
 ```golang
 container.Instance(mock.Animal{}, mock.NewAnimal("dog", 12, "cate-pet"))
+```
+### 5 Bind interfaces to implementations
+```golang
+var cacheInterface *mock.cacheInterface
+container.Singleton(cacheInterface, mock.NewRedisCache)
+```
+### 6 Context binding
+> Refer to context binding in the Laravel documentation for details on context binding
+
+```golang
+app.When(mock.NewFatherWithInterface).Need(workInterface).Give(func(work *mock.Work) *mock.Work {
+    return work
+})
+
+app.When(mock.NewMotherWithInterface).Need(workInterface).Give(func(work mock.Homework) mock.Homework {
+    return work
+})
+```
+### 7. Automatic injection
+```golang
+// It cannot carry formal parameters, or instance state, if it is dependency injected into another method
+container.Bind(mock.Animal{}, mock.NewAnimal, false)
+
+container.Bind(mock.Person{}, func(animal mock.Animal) *mock.Person{
+    return &mockPerson{pet:animal}
+}, false)
+
+container.Make(mock.Person{})
+```
+### 8. Container events
+```golang
+# global before resovle event
+container.BeforeResolving(nil, func(abstract string, param []interface{}, container *Container) {
+})
+
+# local before resovle event
+container.BeforeResolving(abstract, func(index string, param []interface{}, container *Container) {
+})
+....
 ```
 
 ##  License
