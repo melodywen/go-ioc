@@ -99,6 +99,8 @@ container.BeforeResolving(abstract, func(index string, param []interface{}, cont
 })
 ....
 ```
+## Notice
+The unit test coverage of this project is 93%, and most of the methods have specific test instances, except for the part of exception throwing errors. For details on each direction of learning, refer to the test code.
 
 ##  License
 © jiawenChen, 2021~time.Now
