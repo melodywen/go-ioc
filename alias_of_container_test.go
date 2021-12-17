@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/mock"
+	"github.com/melodywen/go-ioc/mock"
 	"reflect"
 	"testing"
 )
@@ -104,8 +104,8 @@ func TestContainer_Alias(t *testing.T) {
 		{
 			name: "测试一组",
 			fields: fields{StructOfContainer{
-				aliases:         map[string]string{"dog": "cjw.com/melodywen/go-ioc/mock.NewAnimal"},
-				abstractAliases: map[string][]string{"cjw.com/melodywen/go-ioc/mock.NewAnimal": []string{"dog"}},
+				aliases:         map[string]string{"dog": "github.com/melodywen/go-ioc/mock.NewAnimal"},
+				abstractAliases: map[string][]string{"github.com/melodywen/go-ioc/mock.NewAnimal": []string{"dog"}},
 			}},
 			args: args{
 				abstract: mock.NewAnimal,

@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/mock"
+	"github.com/melodywen/go-ioc/mock"
 	"fmt"
 	"reflect"
 	"testing"
@@ -25,11 +25,11 @@ func TestContainer_When(t *testing.T) {
 		{
 			name: "如果是单值",
 			args: args{concrete: mock.Animal{}},
-			want: newContextualBindingBuilder(container, []string{"cjw.com/melodywen/go-ioc/mock.Animal"}),
+			want: newContextualBindingBuilder(container, []string{"github.com/melodywen/go-ioc/mock.Animal"}),
 		}, {
 			name: "如果是数组值",
 			args: args{concrete: []interface{}{mock.Animal{}, mock.Animal{}}},
-			want: newContextualBindingBuilder(container, []string{"cjw.com/melodywen/go-ioc/mock.Animal", "cjw.com/melodywen/go-ioc/mock.Animal"}),
+			want: newContextualBindingBuilder(container, []string{"github.com/melodywen/go-ioc/mock.Animal", "github.com/melodywen/go-ioc/mock.Animal"}),
 		},
 	}
 	for _, tt := range tests {
@@ -59,7 +59,7 @@ func TestContainer_AddContextualBinding(t *testing.T) {
 			name: "测试第一轮",
 			fields: fields{StructOfContainer: StructOfContainer{
 				contextual: map[string]map[string]interface{}{
-					"cjw.com/melodywen/go-ioc/mock.Animal": {"cjw.com/melodywen/go-ioc/mock.AddAndParam": 222},
+					"github.com/melodywen/go-ioc/mock.Animal": {"github.com/melodywen/go-ioc/mock.AddAndParam": 222},
 				},
 			}},
 			args: args{

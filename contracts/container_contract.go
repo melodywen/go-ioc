@@ -1,6 +1,6 @@
 package contracts
 
-import container "cjw.com/melodywen/go-ioc"
+import container "github.com/melodywen/go-ioc"
 
 // ContainerContract container interface
 type ContainerContract interface {

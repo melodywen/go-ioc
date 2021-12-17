@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/mock"
+	"github.com/melodywen/go-ioc/mock"
 	"fmt"
 	"reflect"
 	"testing"
@@ -82,7 +82,7 @@ func TestContainer_Resolved(t *testing.T) {
 		{
 			name: "如果在instance 中",
 			fields: fields{StructOfContainer{
-				instances: map[string]interface{}{"cjw.com/melodywen/go-ioc/mock.Animal": 1},
+				instances: map[string]interface{}{"github.com/melodywen/go-ioc/mock.Animal": 1},
 			}},
 			args:   args{abstract: mock.Animal{}},
 			wantOk: true,
@@ -90,7 +90,7 @@ func TestContainer_Resolved(t *testing.T) {
 		{
 			name: "如果在resolved 中",
 			fields: fields{StructOfContainer{
-				resolved: map[string]bool{"*cjw.com/melodywen/go-ioc/mock.Animal": true},
+				resolved: map[string]bool{"*github.com/melodywen/go-ioc/mock.Animal": true},
 			}},
 			args:   args{abstract: &mock.Animal{}},
 			wantOk: true,
@@ -98,8 +98,8 @@ func TestContainer_Resolved(t *testing.T) {
 		{
 			name: "如果都不在中",
 			fields: fields{StructOfContainer{
-				instances: map[string]interface{}{"cjw.com/melodywen/go-ioc/mock.Animal": 1},
-				resolved:  map[string]bool{"*cjw.com/melodywen/go-ioc/mock.Animal": true},
+				instances: map[string]interface{}{"github.com/melodywen/go-ioc/mock.Animal": 1},
+				resolved:  map[string]bool{"*github.com/melodywen/go-ioc/mock.Animal": true},
 			}},
 			args:   args{abstract: 1},
 			wantOk: false,

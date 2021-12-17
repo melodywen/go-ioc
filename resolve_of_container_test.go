@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/mock"
+	"github.com/melodywen/go-ioc/mock"
 	"fmt"
 	"reflect"
 	"testing"
@@ -29,7 +29,7 @@ func TestContainer_getConcrete(t *testing.T) {
 				concrete: mock.NewAnimal,
 				shared:   false,
 			},
-			args:         args{abstract: "cjw.com/melodywen/go-ioc/mock.Animal"},
+			args:         args{abstract: "github.com/melodywen/go-ioc/mock.Animal"},
 			wantConcrete: mock.NewAnimal,
 		},
 		{
@@ -39,8 +39,8 @@ func TestContainer_getConcrete(t *testing.T) {
 				concrete: mock.NewAnimal,
 				shared:   false,
 			},
-			args:         args{abstract: "cjw.com/melodywen/go-ioc/mock.Animal"},
-			wantConcrete: "cjw.com/melodywen/go-ioc/mock.Animal",
+			args:         args{abstract: "github.com/melodywen/go-ioc/mock.Animal"},
+			wantConcrete: "github.com/melodywen/go-ioc/mock.Animal",
 		},
 	}
 	for _, tt := range tests {
@@ -88,7 +88,7 @@ func TestContainer_IsShared(t *testing.T) {
 				concrete: 1,
 				shared:   false,
 			},
-			args: args{abstract: "cjw.com/melodywen/go-ioc/mock.NewAnimal"},
+			args: args{abstract: "github.com/melodywen/go-ioc/mock.NewAnimal"},
 			want: false,
 		},
 		{
@@ -98,7 +98,7 @@ func TestContainer_IsShared(t *testing.T) {
 				concrete: 1,
 				shared:   true,
 			},
-			args: args{abstract: "cjw.com/melodywen/go-ioc/mock.NewAnimal"},
+			args: args{abstract: "github.com/melodywen/go-ioc/mock.NewAnimal"},
 			want: true,
 		}, {
 			name: "测试——不存在",
@@ -117,7 +117,7 @@ func TestContainer_IsShared(t *testing.T) {
 				shared:   true,
 				instance: 1,
 			},
-			args: args{abstract: "cjw.com/melodywen/go-ioc/mock.NewAnimal"},
+			args: args{abstract: "github.com/melodywen/go-ioc/mock.NewAnimal"},
 			want: true,
 		},
 	}

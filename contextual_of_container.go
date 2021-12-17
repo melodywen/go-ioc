@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/util"
+	util "github.com/melodywen/go-ioc/util"
 )
 
 // When Define a contextual binding.

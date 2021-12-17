@@ -1,7 +1,7 @@
 package container
 
 import (
-	"cjw.com/melodywen/go-ioc/mock"
+	"github.com/melodywen/go-ioc/mock"
 	"reflect"
 	"testing"
 )
@@ -24,7 +24,7 @@ func TestContextualBindingBuilder_Give(t *testing.T) {
 			name: "测试单值绑定",
 			fields: fields{StructOfContainer: StructOfContainer{
 				contextual: map[string]map[string]interface{}{
-					"cjw.com/melodywen/go-ioc/mock.NewAnimalAndParam":{"cjw.com/melodywen/go-ioc/mock.Animal":222},
+					"github.com/melodywen/go-ioc/mock.NewAnimalAndParam":{"github.com/melodywen/go-ioc/mock.Animal":222},
 				},
 			}},
 			args: args{
@@ -36,8 +36,8 @@ func TestContextualBindingBuilder_Give(t *testing.T) {
 			name: "测试多个值绑定",
 			fields: fields{StructOfContainer: StructOfContainer{
 				contextual: map[string]map[string]interface{}{
-					"cjw.com/melodywen/go-ioc/mock.NewAnimalAndParam":{"cjw.com/melodywen/go-ioc/mock.Animal":222},
-					"cjw.com/melodywen/go-ioc/mock.NewAnimal":{"cjw.com/melodywen/go-ioc/mock.Animal":222},
+					"github.com/melodywen/go-ioc/mock.NewAnimalAndParam":{"github.com/melodywen/go-ioc/mock.Animal":222},
+					"github.com/melodywen/go-ioc/mock.NewAnimal":{"github.com/melodywen/go-ioc/mock.Animal":222},
 				},
 			}},
 			args: args{

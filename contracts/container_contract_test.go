@@ -1,8 +1,8 @@
 package contracts
 
 import (
-	container "cjw.com/melodywen/go-ioc"
 	"fmt"
+	container "github.com/melodywen/go-ioc"
 	"testing"
 )
 

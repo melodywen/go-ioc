@@ -4,7 +4,7 @@
 go test -coverprofile=coverage.out
 
 coverage: 92.2% of statements
-ok      cjw.com/melodywen/go-ioc        0.219s
+ok      github.com/melodywen/go-ioc        0.219s
 ```
 测试结果：
 ```
