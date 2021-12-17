@@ -1,4 +1,4 @@
-module cjw.com/melodywen/go-ioc
+module github.com/melodywen/go-ioc
 
 go 1.17
 
