@@ -40,7 +40,6 @@ func (container *Container) resolveDependencies(parameterType reflect.Type, buil
 	//case reflect.Int:
 	//	fallthrough
 	//case reflect.Func:
-	//	panic("can not auto load param,because param type can not suppose ,please connect admin:" + parameterType.Kind().String())
 	case reflect.Interface:
 		pkgInfo = "*" + parameterType.PkgPath() + "." + parameterType.Name()
 	case reflect.Struct:

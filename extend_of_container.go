@@ -1,6 +1,8 @@
 package container
 
 import (
+	"github.com/melodywen/go-ioc/exceptions"
+	"github.com/sirupsen/logrus"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -27,7 +29,7 @@ func (extendOfContainer *ExtendOfContainer) AbstractToString(abstract interface{
 	case reflect.Ptr:
 		response = "*" + classInfo.Elem().PkgPath() + "." + classInfo.Elem().Name()
 	default:
-		panic("checkAbstract error")
+		logrus.Panicln(exceptions.NewAbstractToStringException(abstract))
 	}
 	return response
 }

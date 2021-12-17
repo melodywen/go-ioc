@@ -1,7 +1,8 @@
 package container
 
 import (
-	"fmt"
+	"github.com/melodywen/go-ioc/exceptions"
+	"github.com/sirupsen/logrus"
 	"reflect"
 	"strings"
 )
@@ -28,11 +29,12 @@ func (container *Container) Build(concrete interface{}, parameters []interface{}
 
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("build 发现异常")
-			fmt.Println("concrete:", reflect.TypeOf(concrete))
-			fmt.Println("origin-parameters:", parameters)
-			fmt.Println("autoload-parameters:", params)
-			panic(err)
+			logrus.WithFields(logrus.Fields{
+				"concrete-type":       reflect.TypeOf(concrete),
+				"concrete":            concrete,
+				"origin-parameters":   parameters,
+				"autoload-parameters": params,
+			}).Panicln(err)
 		}
 	}()
 	// 获取实现类的类型
@@ -41,8 +43,7 @@ func (container *Container) Build(concrete interface{}, parameters []interface{}
 	switch concreteType.Kind() {
 	case reflect.Func: // 如果是一个回调函数或者是这个构造方法都走这里
 	default:
-		fmt.Println("this concrete is :", concrete)
-		panic("Target [xxx] is not instantiable. please see upper logger")
+		panic(exceptions.NewBuildException(concrete))
 	}
 
 	// 是否是构造函数压入栈
