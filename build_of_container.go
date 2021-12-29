@@ -29,12 +29,16 @@ func (container *Container) Build(concrete interface{}, parameters []interface{}
 
 	defer func() {
 		if err := recover(); err != nil {
-			logrus.WithFields(logrus.Fields{
-				"concrete-type":       reflect.TypeOf(concrete),
-				"concrete":            concrete,
-				"origin-parameters":   parameters,
-				"autoload-parameters": params,
-			}).Panicln(err)
+			if e, ok := err.(exceptions.BaseExceptionInterface); ok && e.GetErrorModule() == "github.com/melodywen/go-ioc" {
+				logrus.WithFields(logrus.Fields{
+					"concrete-type":       reflect.TypeOf(concrete),
+					"concrete":            concrete,
+					"origin-parameters":   parameters,
+					"autoload-parameters": params,
+				}).Panicln(e)
+			} else {
+				panic(err)
+			}
 		}
 	}()
 	// 获取实现类的类型
