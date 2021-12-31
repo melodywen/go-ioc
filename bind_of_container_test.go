@@ -1,8 +1,8 @@
 package container
 
 import (
-	"github.com/melodywen/go-ioc/mock"
 	"fmt"
+	"github.com/melodywen/go-ioc/mock"
 	"reflect"
 	"testing"
 )
@@ -72,6 +72,7 @@ func TestContainer_Resolved(t *testing.T) {
 	}
 	type args struct {
 		abstract interface{}
+		alias    interface{}
 	}
 	tests := []struct {
 		name   string
@@ -103,6 +104,19 @@ func TestContainer_Resolved(t *testing.T) {
 			}},
 			args:   args{abstract: 1},
 			wantOk: false,
+		}, {
+			name: "如果是别名",
+			fields: fields{StructOfContainer{
+				instances:       map[string]interface{}{},
+				resolved:        map[string]bool{"abc": true},
+				aliases:         map[string]string{},
+				abstractAliases: map[string][]string{},
+			}},
+			args: args{
+				abstract: "abc",
+				alias:    mock.Animal{},
+			},
+			wantOk: true,
 		},
 	}
 	for _, tt := range tests {
@@ -110,7 +124,15 @@ func TestContainer_Resolved(t *testing.T) {
 			container := &Container{
 				StructOfContainer: tt.fields.StructOfContainer,
 			}
-			if gotOk := container.Resolved(tt.args.abstract); gotOk != tt.wantOk {
+			var gotOk bool
+			if tt.args.alias != nil {
+				fmt.Println(tt.args.abstract, tt.args.alias)
+				container.Alias(tt.args.abstract, tt.args.alias)
+				gotOk = container.Resolved(tt.args.alias)
+			} else {
+				gotOk = container.Resolved(tt.args.abstract)
+			}
+			if gotOk != tt.wantOk {
 				t.Errorf("Resolved() = %v, want %v", gotOk, tt.wantOk)
 			}
 		})
@@ -280,6 +302,32 @@ func TestContainer_SingletonIf(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Instance() = %v, want %v", container.StructOfContainer, tt.want)
 			}
+		})
+	}
+}
+
+func TestContainer_Flush(t *testing.T) {
+	type fields struct {
+		StructOfContainer StructOfContainer
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "测试一轮",
+			fields: fields{StructOfContainer: StructOfContainer{
+				resolved: map[string]bool{"a": true},
+				bindings: nil,
+			}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			container := &Container{
+				StructOfContainer: tt.fields.StructOfContainer,
+			}
+			container.Flush()
 		})
 	}
 }

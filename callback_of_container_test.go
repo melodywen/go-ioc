@@ -1,8 +1,8 @@
 package container
 
 import (
-	"github.com/melodywen/go-ioc/mock"
 	"fmt"
+	"github.com/melodywen/go-ioc/mock"
 	"reflect"
 	"strconv"
 	"testing"

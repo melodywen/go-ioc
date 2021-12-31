@@ -6,12 +6,11 @@ import (
 	"testing"
 )
 
-
 func TestContainerContract(t *testing.T) {
-	
-	var app ContainerContract;
-	
+
+	var app ContainerContract
+
 	app = container.NewContainer()
-	
+
 	fmt.Println(app)
 }

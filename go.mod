@@ -3,6 +3,7 @@ module github.com/melodywen/go-ioc
 go 1.17
 
 require (
+	github.com/client9/misspell v0.3.4 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/yuin/goldmark v1.4.1 // indirect
 	golang.org/x/mod v0.5.1 // indirect

@@ -6,6 +6,7 @@ type ContextualBindingBuilder struct {
 	concrete  []string   // contextual
 	needs     string     // need obj of abstract
 }
+
 // contextual binding builder construct
 func newContextualBindingBuilder(container *Container, concrete []string) *ContextualBindingBuilder {
 	return &ContextualBindingBuilder{container: container, concrete: concrete}

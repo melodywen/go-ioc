@@ -15,3 +15,6 @@ go tool cover -html=coverage.out
 ```
 https://github.com/gojp/goreportcard
 ```
+```
+goreportcard-cli -v
+```
