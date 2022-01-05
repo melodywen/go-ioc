@@ -98,13 +98,13 @@ func (container *Container) Instance(abstract interface{}, instance interface{})
 	if _, ok := container.aliases[index]; ok {
 		delete(container.aliases, index)
 	}
+	isBound := container.Bound(index)
 
 	// We'll check to determine if this type has been bound before, and if it has
 	// we will fire the rebound callbacks registered with the container and it
 	// can be updated with consuming classes that have gotten resolved here.
 	container.instances[index] = instance
 
-	isBound := container.Bound(index)
 	if isBound {
 		container.rebound(index)
 	}
