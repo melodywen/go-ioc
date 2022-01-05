@@ -4,6 +4,8 @@ package container
 type Container struct {
 	StructOfContainer
 	ExtendOfContainer
+
+	child interface{}
 }
 
 // NewContainer container construct
@@ -30,4 +32,11 @@ func NewContainer() *Container {
 		},
 	}
 	return structOfContainer
+}
+
+// NewContainerOfChild if child new instance obj
+func NewContainerOfChild(child interface{}) *Container {
+	container := NewContainer()
+	container.child = child
+	return container
 }

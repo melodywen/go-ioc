@@ -1,6 +1,7 @@
 package container
 
 import (
+	"reflect"
 	"runtime"
 )
 
@@ -36,6 +37,15 @@ func (container *Container) makeWithBuildStack(abstract string, parameters []int
 // resolve 进行解析
 func (container *Container) resolve(abstract string, parameters []interface{}, raiseEvents bool, buildStack []string) (object interface{}) {
 	abstract = container.GetAlias(abstract)
+
+	// callback child method callback method
+	if container.child != nil {
+		relValue := reflect.ValueOf(container.child)
+		method := relValue.MethodByName("ResolveCallback")
+		if method.IsValid() {
+			method.Call([]reflect.Value{reflect.ValueOf(abstract)})
+		}
+	}
 
 	// First we'll fire any event handlers which handle the "before" resolving of
 	// specific types. This gives some hooks the chance to add various extends
