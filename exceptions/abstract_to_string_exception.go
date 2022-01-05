@@ -14,7 +14,7 @@ func NewAbstractToStringException(abstract interface{}) *AbstractToStringExcepti
 }
 
 // GetErrorCode defined error code name
-func (_ *AbstractToStringException) GetErrorCode() string {
+func (e *AbstractToStringException) GetErrorCode() string {
 	return "-exception"
 }
 

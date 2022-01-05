@@ -44,7 +44,7 @@ func (container *Container) resolve(abstract string, parameters []interface{}, r
 			method.Call([]reflect.Value{reflect.ValueOf(abstract)})
 		}
 	}
-	
+
 	abstract = container.GetAlias(abstract)
 
 	// First we'll fire any event handlers which handle the "before" resolving of

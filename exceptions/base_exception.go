@@ -11,6 +11,6 @@ type BaseException struct {
 }
 
 // GetErrorModule defined error model name
-func (_ *BaseException) GetErrorModule() string {
+func (e *BaseException) GetErrorModule() string {
 	return "github.com/melodywen/go-ioc"
 }

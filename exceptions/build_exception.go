@@ -14,7 +14,7 @@ func NewBuildException(concrete interface{}) *BuildException {
 }
 
 // GetErrorCode defined error code name
-func (_ *BuildException) GetErrorCode() string {
+func (e *BuildException) GetErrorCode() string {
 	return "build-exception"
 }
 
