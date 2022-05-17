@@ -24,41 +24,40 @@ container := NewContainer()
 ```
 ### 2. Simple binding
 ```golang
-// Animal is a test struct
-type Animal struct {
-	name     string
-	age      int
-	category string
+type Request struct {
+	Method string
+	Uri    string
+	param  map[string]any
 }
 
-// NewAnimal animal construct
-func NewAnimal(name string, age int, category string) *Animal {
-	return &Animal{name: name, age: age, category: category}
+func newRequest() *Request {
+	return &Request{
+		Method: "get",
+		Uri:    "/user",
+		param: map[string]any{
+			"user": "张三",
+			"age":  12,
+		},
+	}
 }
 
-// Bind a constructor
-container.Bind(mock.Animal{}, mock.NewAnimal, false)
+container.Bind(&Request{}, newRequest, false)
 
-// resolve
-container.MakeWithParams(mock.Animal{}, []interface{}{"dog", 12, "cate-pet"})
+container.Make(&Request{})
 
-// Bind a callback method
-container.Bind(mock.Animal{}, func() *mock.Animal {
-    return mock.NewAnimal("dog", 12, "cate-pet")
+container.Bind(&Request{}, func() *Request {
+    return newRequest()
 }, true)
-// resolve
-container.Make(mock.Animal{})
-
 ```
 ### 3. Binding of singletons
 ```golang
-container.Singleton(mock.Animal{}, func() *mock.Animal {
-    return mock.NewAnimal("dog", 12, "cate-pet")
+container.Singleton(&Request{}, func() *Request {
+    return newRequest()
 })
 ```
 ### 4. Binding instance
 ```golang
-container.Instance(mock.Animal{}, mock.NewAnimal("dog", 12, "cate-pet"))
+container.Instance(&Request{}, newRequest())
 ```
 ### 5 Bind interfaces to implementations
 ```golang
@@ -69,40 +68,61 @@ container.Singleton(cacheInterface, mock.NewRedisCache)
 > Refer to context binding in the Laravel documentation for details on context binding
 
 ```golang
-app.When(mock.NewFatherWithInterface).Need(workInterface).Give(func(work *mock.Work) *mock.Work {
-    return work
+var o *ossInterface
+container.When([]any{newUserControllerAndOss}).Need(o).Give(func(oss *ossAli) ossInterface {
+    return oss
 })
-
-app.When(mock.NewMotherWithInterface).Need(workInterface).Give(func(work mock.Homework) mock.Homework {
-    return work
+container.When([]any{newFileControllerAndOss}).Need(o).Give(func(oss *ossTencent) ossInterface {
+    return oss
 })
 ```
 ### 7. Automatic injection
 ```golang
-// It cannot carry formal parameters, or instance state, if it is dependency injected into another method
-container.Bind(mock.Animal{}, mock.NewAnimal, false)
+container.SingletonIf(&Request{}, newRequest)
+container.Instance(Request{}, *newRequest())
+container.SingletonIf(&Response{}, newResponse)
+container.Instance(Response{}, *newResponse())
 
-container.Bind(mock.Person{}, func(animal mock.Animal) *mock.Person{
-    return &mockPerson{pet:animal}
-}, false)
 
-container.Make(mock.Person{})
+func newUserControllerAndObj(request *Request, response Response) (*userController, Request, *Response) {
+	return &userController{}, *request, &response
+}
+
+container.Bind(newUserControllerAndObj, nil)
+container.Make(newUserControllerAndObj)
 ```
 ### 8. Container events
 ```golang
-# global before resovle event
-container.BeforeResolving(nil, func(abstract string, param []interface{}, container *Container) {
+container.BeforeResolving(nil, func(s string, param []any, c *Container) {
+		fmt.Println("global-before-callback", s)
 })
-
-# local before resovle event
-container.BeforeResolving(abstract, func(index string, param []interface{}, container *Container) {
+container.BeforeResolving(newUserControllerAndObj, func(s string, param []any, c *Container) {
+    fmt.Println("before-callback", s)
+})
+container.Resolving(nil, func(instance any, container *Container) {
+    fmt.Println("global-ing-callback", instance)
+})
+container.Resolving(newUserControllerAndObj, func(instance any, container *Container) {
+    fmt.Println("ing-callback", instance)
+})
+container.AfterResolving(nil, func(instance any, container *Container) {
+    fmt.Println("global-after-callback", instance)
+})
+container.AfterResolving(newUserControllerAndObj, func(instance any, container *Container) {
+    fmt.Println("after-callback", instance)
+})
+container.Extend(newUserControllerAndObj, func(object any, container *Container) any {
+    return object
+})
+container.Rebinding(newUserControllerAndObj, func(container *Container, instance any) {
+    fmt.Println("rebind callback", AbstractToString(newUserControllerAndObj))
 })
 ....
 ```
 ## Notice
-The unit test coverage of this project is 93%, and most of the methods have specific test instances, except for the part of exception throwing errors. For details on each direction of learning, refer to the test code.
+The unit test coverage of this project is 100%, and most of the methods have specific test instances, except for the part of exception throwing errors. For details on each direction of learning, refer to the test code.
 
 ##  License
-© jiawenChen, 2021~time.Now
+© jiawenChen, 2022~time.Now
 
 Released under the MIT License
